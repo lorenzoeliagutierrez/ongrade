@@ -37,7 +37,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item menu-open">
-            <a href="index.php" class="nav-link active">
+            <a href="../dashboard/index.php" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Dashboard
@@ -46,8 +46,38 @@
           </li>
           <?php
             if ($_SESSION['role'] == "Super Administrator") {
+          ?>
+          <li class="nav-item">
+            <a href="../dashboard/index.php" class="nav-link active">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Dashboard
+              </p>
+            </a>
+          </li>
+          <?php
             } elseif ($_SESSION['role'] == "Registrar") {
+          ?>
+          <li class="nav-item">
+            <a href="../faculty/faculty.load.php" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                Faculty's Load
+              </p>
+            </a>
+          </li>
+          <?php
             } elseif ($_SESSION['role'] == "Adviser") {
+          ?>
+          <li class="nav-item">
+            <a href="index.php" class="nav-link active">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Dashboard
+              </p>
+            </a>
+          </li>
+          <?php
             } elseif ($_SESSION['role'] == "Faculty Staff") {
             } elseif ($_SESSION['role'] == "Student") {
             }

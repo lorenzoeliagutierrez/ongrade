@@ -1,5 +1,5 @@
 <?php
-require '../../includes/conn.php';
+require '../../includes/session.php';
 session_start();
 ob_start();
 ?>
@@ -34,8 +34,8 @@ ob_start();
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard v1</li>
+                <li class="breadcrumb-item"><a href="#"></a></li>
+                <li class="breadcrumb-item active"></li>
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
