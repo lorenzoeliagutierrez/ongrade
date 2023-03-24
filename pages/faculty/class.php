@@ -14,6 +14,7 @@ $section = $_GET['section'];
   <title>AdminLTE 3 | Dashboard</title>
 
   <?php include '../../includes/links.php'; ?>
+  <link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
 
 </head>
 
@@ -50,10 +51,13 @@ $section = $_GET['section'];
         <!-- Default box -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title"><b><?php echo $section?>'s</b> List of Students</h3>
+            <h3 class="card-title"><b>
+                <?php echo $section ?>'s
+              </b> List of Students</h3>
 
             <div class="card-tools">
-              <a class="btn btn-primary btn-sm">Class History</a>
+              <a href="grade.class.php?class_id=<?php echo $class_id; ?>&section=<?php echo $section; ?>"
+                class="btn btn-primary btn-sm">Enter Section Grade</a>
             </div>
           </div>
           <div class="card-body">
@@ -91,99 +95,177 @@ $section = $_GET['section'];
                 AND tbl_schoolyears.sem_id = '$_SESSION[active_semester]'
                 AND tbl_schoolyears.remark = 'Approved'");
 
-                while ($row = mysqli_fetch_array($load_info))  {
-                ?>
-                <tr>
-                  <td></td>
-                  <td><?php echo strtoupper($row['fullname']); ?></td>
-                  <td><?php echo $row['course']; ?></td>
-                  <td><?php echo $row['stud_no']; ?></td>
-                  <td><?php echo $row['prelim']; ?></td>
-                  <td><?php echo $row['midterm']; ?></td>
-                  <td><?php echo $row['finalterm']; ?></td>
-                  <td><?php echo $row['ofgrade']; ?></td>
-                  <td><?php echo $row['numgrade']; ?></td>
-                  <td><?php echo $row['remarks']; ?></td>
-                  <td><?php echo $row['absences']; ?></td>
-                  <td><?php echo $row['last_update']; ?></td>
-                  <td><?php echo $row['updated']; ?></td>
-                  <td>
-                    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-lg<?php echo $row['enrolled_subj_id']; ?>">Enter Grade</button>
-                  </td>
-                </tr>
-                    <!-- Modal for grade input -->
-                    <div class="modal fade" id="modal-lg<?php echo $row['enrolled_subj_id']; ?>">
-                      <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h4 class="modal-title">Enter Grade/Absences for <b><?php echo strtoupper($row['fullname']); ?></b></h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
+                while ($row = mysqli_fetch_array($load_info)) {
+                  $last_updated = new DateTime($row['last_updated']);
+                  ?>
+                  <tr>
+                    <td>
+                      <?php
+                      if (empty($row['img'])) {
+
+                      } else {
+                        ?>
+                        <img style="width: 80px; height: 80px;"
+                          src="data:image/jpeg;base64,<?php echo base64_encode($row['img']) ?>">
+                        <?php
+                      }
+                      ?>
+                    </td>
+                    <td>
+                      <?php echo $row['stud_no']; ?>
+                    </td>
+                    <td>
+                      <?php echo strtoupper($row['fullname']); ?>
+                    </td>
+                    <td>
+                      <?php echo $row['course_abv']; ?>
+                    </td>
+                    <td>
+                      <?php echo $row['prelim']; ?>
+                    </td>
+                    <td>
+                      <?php echo $row['midterm']; ?>
+                    </td>
+                    <td>
+                      <?php echo $row['finalterm']; ?>
+                    </td>
+                    <td>
+                      <?php echo $row['ofgrade']; ?>
+                    </td>
+                    <td>
+                      <?php echo $row['numgrade']; ?>
+                    </td>
+                    <?php
+                    if ($row['remarks'] == "Passed") {
+                      ?>
+                      <td style="color: green; font-weight: bold;">
+                        <?php echo $row['remarks']; ?>
+                      </td>
+                      <?php
+                    } elseif ($row['remarks'] == "Failed") {
+                      ?>
+                      <td style="color: red; font-weight: bold;">
+                        <?php echo $row['remarks']; ?>
+                      </td>
+                      <?php
+                    } else {
+                      ?>
+                      <td style="color: orange; font-weight: bold;">
+                        <?php echo $row['remarks']; ?>
+                      </td>
+                      <?php
+                    }
+                    ?>
+                    <td>
+                      <?php echo $row['absences']; ?>
+                    </td>
+                    <td>
+                      <?php echo $last_updated->format('h:i a \o\n M d, Y') ?>
+                    </td>
+                    <td>
+                      <?php echo $row['updated']; ?>
+                    </td>
+                    <td>
+                      <button class="btn btn-primary btn-sm" data-toggle="modal"
+                        data-target="#modal-lg<?php echo $row['enrolled_subj_id']; ?>">Enter Grade</button>
+                    </td>
+                  </tr>
+                  <!-- Modal for grade input -->
+                  <div class="modal fade" id="modal-lg<?php echo $row['enrolled_subj_id']; ?>">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Enter Grade/Absences for <b>
+                              <?php echo strtoupper($row['fullname']); ?>
+                            </b></h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <form action="userData/enter.grade.php?class_id=<?php echo $class_id ?>&section=<?php echo $section ?>"
+                          method="POST">
                           <div class="modal-body">
-                            <form action="userData/enter.grade.php" method="POST">
-                              <input name="enrolled_subj_id" value="<?php echo $row['enrolled_subj_id']; ?>" hidden>
-                              <input name="special_tut" value="<?php echo $row['special_tut']; ?>" hidden>
-                              <div class="row">
-                                <div class="col-sm-4">
-                                  <div class="form-group">
-                                    <label>Prelims</label>
-                                    <input type="text" class="form-control" placeholder="Enter ..." onkeyup="ofGrade()" name="prelim" id="prelim" value="<?php echo $row['prelim']?>">
-                                  </div>
-                                </div>
-                                <div class="col-sm-4">
-                                  <div class="form-group">
-                                    <label>Midterms</label>
-                                    <input type="text" class="form-control" placeholder="Enter ..." onkeyup="ofGrade()" name="midterm" id="midterm" value="<?php echo $row['midterm']?>">
-                                  </div>
-                                </div>
-                                <div class="col-sm-4">
-                                  <div class="form-group">
-                                    <label>Finalterm</label>
-                                    <input type="text" class="form-control" placeholder="Enter ..." onkeyup="ofGrade()" name="finalterm" id="finalterm" value="<?php echo $row['finalterm']?>">
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="row">
-                                <div class="col-sm-4">
-                                  <div class="form-group">
-                                    <label>Final Grade</label>
-                                    <input type="text" class="form-control" placeholder="Enter ..." name="ofgrade" id="ofgrade" value="<?php echo $row['ofgrade']?>" disabled>
-                                  </div>
-                                </div>
-                                <div class="col-sm-4">
-                                  <div class="form-group">
-                                    <label>Numerical Grade</label>
-                                    <input type="text" class="form-control" placeholder="Enter ..." name="numgrade" value="<?php echo $row['numgrade']?>" disabled>
-                                  </div>
-                                </div>
-                                <div class="col-sm-4">
-                                  <div class="form-group">
-                                    <label>Final Remark</label>
-                                    <input type="text" class="form-control" placeholder="Enter ..." name="remarks" value="<?php echo $row['remarks']?>" disabled>
-                                  </div>
+                            <input name="enrolled_subj_id" value="<?php echo $row['enrolled_subj_id']; ?>" hidden>
+                            <input name="special_tut" value="<?php echo $row['special_tut']; ?>" hidden>
+                            <div class="row">
+                              <div class="col-sm-4">
+                                <div class="form-group">
+                                  <label>Prelims
+                                    <?php echo $_SESSION['active_semester'] ?>
+                                  </label>
+                                  <?php
+                                  if ($_SESSION['active_semester'] == "Summer" || $row['special_tut'] == 1) {
+                                    ?>
+                                    <input type="text" class="form-control" placeholder="Enter ..." onkeyup="ofGrade()"
+                                      name="prelim" id="prelim" value="<?php echo $row['prelim'] ?>" disabled>
+                                    <?php
+                                  } else {
+                                    ?>
+                                    <input type="text" class="form-control" placeholder="Enter ..." onkeyup="ofGrade()"
+                                      name="prelim" id="prelim" value="<?php echo $row['prelim'] ?>">
+                                    <?php
+                                  }
+                                  ?>
                                 </div>
                               </div>
-                              <hr>
-                              <div class="row">
-                                <div class="col-sm-4">
-                                  <div class="form-group">
-                                    <label>Absences</label>
-                                    <input type="text" class="form-control" placeholder="Enter ..." name="absences" value="<?php echo $row['absences']?>">
-                                  </div>
+                              <div class="col-sm-4">
+                                <div class="form-group">
+                                  <label>Midterms</label>
+                                  <input type="text" class="form-control" placeholder="Enter ..." onkeyup="ofGrade()"
+                                    name="midterm" id="midterm" value="<?php echo $row['midterm'] ?>">
                                 </div>
                               </div>
-                            </form>
+                              <div class="col-sm-4">
+                                <div class="form-group">
+                                  <label>Finalterm</label>
+                                  <input type="text" class="form-control" placeholder="Enter ..." onkeyup="ofGrade()"
+                                    name="finalterm" id="finalterm" value="<?php echo $row['finalterm'] ?>">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-sm-4">
+                                <div class="form-group">
+                                  <label>Final Grade</label>
+                                  <input type="text" class="form-control" placeholder="Enter ..." name="ofgrade"
+                                    id="ofgrade" value="<?php echo $row['ofgrade'] ?>" disabled>
+                                </div>
+                              </div>
+                              <div class="col-sm-4">
+                                <div class="form-group">
+                                  <label>Numerical Grade</label>
+                                  <input type="text" class="form-control" placeholder="Enter ..." name="numgrade"
+                                    id="numgrade" value="<?php echo $row['numgrade'] ?>" disabled>
+                                </div>
+                              </div>
+                              <div class="col-sm-4">
+                                <div class="form-group">
+                                  <label>Final Remark</label>
+                                  <input type="text" class="form-control" placeholder="Enter ..." name="remarks"
+                                    id="remarks" value="<?php echo $row['remarks'] ?>" disabled>
+                                </div>
+                              </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                              <div class="col-sm-4">
+                                <div class="form-group">
+                                  <label>Absences</label>
+                                  <input type="text" class="form-control" placeholder="Enter ..." name="absences"
+                                    id="absences" value="<?php echo $row['absences'] ?>">
+                                </div>
+                              </div>
+                            </div>
                           </div>
                           <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
                           </div>
-                        </div>
+                        </form>
                       </div>
                     </div>
-                <?php
+                  </div>
+                  <?php
                 }
                 ?>
               </tbody>
@@ -212,54 +294,15 @@ $section = $_GET['section'];
   <!-- ./wrapper -->
 
   <?php include '../../includes/script.php'; ?>
-    <script>
-    function ofGrade()
-        {
-            num1 = 0;
-            num2 = 0;
-            num3 = 0;
-
-            var num1 = parseFloat(document.getElementById("prelim").value * 1);
-            var num2 = parseFloat(document.getElementById("midterm").value * 1);
-            var num3 = parseFloat(document.getElementById("finalterm").value * 1);
-
-            var total = +((num1 + num2 + num3)/3 ).toFixed(2);
-
-            if (total <= 74) {
-              var num = 5.0
-              var num
-
-            } elseif (total <= 79.49) {
-              
-            } elseif (total <= 82.49) {
-              
-            } elseif (total <= 84.49) {
-              
-            } elseif (total <= 87.49) {
-              
-            } elseif (total <= 92.49) {
-              
-            } elseif (total <= 95.49) {
-              
-            } elseif (total <= 97.49) {
-              
-            } elseif (total <= 99.99) {
-              
-            } else (total <= 100) {
-              
-            }
-
-
-            document.getElementById('ofgrade').value = total.toLocaleString("en-US");
-
-        }
-
+  <!-- Toastr -->
+  <script src="../../plugins/toastr/toastr.min.js"></script>
+  <script>
     $(function () {
       $("#example1").DataTable({
         "responsive": true, "lengthChange": false, "autoWidth": false,
         "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
       }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-      
+
       $('#example2').DataTable({
         "paging": true,
         "lengthChange": true,
@@ -270,7 +313,18 @@ $section = $_GET['section'];
         "responsive": true,
       });
     });
+    <?php
+    if (isset($_SESSION['update_success'])) {
+      ?>
+      $(function () {
+        toastr.success('Update Success.', 'Success')
+      });
+      <?php
+    }
+    unset($_SESSION['update_success']);
+    ?>
   </script>
+
 
 </body>
 

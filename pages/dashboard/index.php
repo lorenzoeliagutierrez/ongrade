@@ -1,7 +1,5 @@
 <?php
 require '../../includes/session.php';
-session_start();
-ob_start();
 ?>
 
 <!DOCTYPE html>

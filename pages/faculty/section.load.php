@@ -54,7 +54,6 @@ $subj_desc = $_GET['subj_desc'];
             <h3 class="card-title">Sections for <b><?php echo $class_code .' - '. $subj_desc; ?></b></h3>
 
             <div class="card-tools">
-              <a class="btn btn-primary btn-sm">Class History</a>
             </div>
           </div>
           <div class="card-body">
