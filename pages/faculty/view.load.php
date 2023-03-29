@@ -2,6 +2,14 @@
 require '../../includes/session.php';
 
 $faculty_id = $_GET['faculty_id'];
+
+if (isset($_POST['semester']) && isset($_POST['acadyear'])) {
+  $acadyear = $_POST['acadyear'];
+  $semester = $_POST['semester'];
+} else {
+  $acadyear = $_SESSION['active_acadyear'];
+  $semester = $_SESSION['active_semester'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -10,7 +18,7 @@ $faculty_id = $_GET['faculty_id'];
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Dashboard</title>
+  <title>Dashboard | OnGrade - Bacoor</title>
 
   <?php include '../../includes/links.php'; ?>
 
@@ -53,11 +61,61 @@ $faculty_id = $_GET['faculty_id'];
             $faculty_info = mysqli_query($conn, "SELECT CONCAT(faculty_lastname, ', ' , faculty_firstname) AS fullname FROM tbl_faculties_staff WHERE faculty_id = '$faculty_id'");
             $row = mysqli_fetch_array($faculty_info);
             ?>
-            <h3 class="card-title"><b><?php echo $row['fullname']; ?>'s</b> Subjects Load for <b><?php echo $_SESSION['active_semester']?> - <?php echo $_SESSION['active_acadyear']?></b></h3>
+            <h3 class="card-title"><b><?php echo $row['fullname']; ?>'s</b> Subjects Load for <b><?php echo $semester?> - <?php echo $acadyear?></b></h3>
 
-            <div class="card-tools">
-              <a class="btn btn-primary btn-sm">Class History</a>
-            </div>
+              <div class="card-tools">
+                    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-lg-class-history">Class History</button>
+                    <div class="modal fade" id="modal-lg-class-history">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Search Class History for <b><?php echo $row['fullname']; ?></b></h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <form method="POST">
+                          <div class="modal-body">
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label>Semester</label>
+                                  <select class="form-control select2" name="semester" style="width: 100%;">
+                                    <option selected disabled>Select Semester</option>
+                                    <?php
+                                    $sem_info = mysqli_query($conn, "SELECT * FROM tbl_semesters");
+                                    while ($row = mysqli_fetch_array($sem_info)) {
+                                    ?>
+                                    <option value="<?php echo $row['semester']?>"><?php echo $row['semester']?></option>
+                                    <?php } ?>
+                                  </select>
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label>Academic Year</label>
+                                  <select class="form-control select2" name="acadyear" style="width: 100%;">
+                                    <option selected disabled>Select Academic Year</option>
+                                    <?php
+                                    $sem_info = mysqli_query($conn, "SELECT * FROM tbl_acadyears ORDER BY academic_year DESC");
+                                    while ($row = mysqli_fetch_array($sem_info)) {
+                                    ?>
+                                    <option value="<?php echo $row['academic_year']?>"><?php echo $row['academic_year']?></option>
+                                    <?php } ?>
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+              </div>
           </div>
           <div class="card-body">
             <table id="example2" class="table table-bordered table-hover">
@@ -69,7 +127,7 @@ $faculty_id = $_GET['faculty_id'];
               </thead>
               <tbody>
                 <?php
-                $load_info = mysqli_query($conn, "SELECT * FROM tbl_schedules LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_schedules.subj_id WHERE faculty_id = '$faculty_id' AND acad_year = '$_SESSION[active_acadyear]' AND semester = '$_SESSION[active_semester]'");
+                $load_info = mysqli_query($conn, "SELECT * FROM tbl_schedules LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_schedules.subj_id WHERE faculty_id = '$faculty_id' AND acad_year = '$acadyear' AND semester = '$semester'");
 
                 while ($row = mysqli_fetch_array($load_info))  {
                 ?>

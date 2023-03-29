@@ -66,6 +66,35 @@
               </p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-file"></i>
+              <p>
+                Students' Forms
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../grade/student.record.php" class="nav-link">
+                  <i class="far fa-file nav-icon"></i>
+                  <p>Student's Permanent Record</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../grade/student.curriculum.php" class="nav-link">
+                  <i class="far fa-file nav-icon"></i>
+                  <p>Student's Curriculum</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../grade/student.summary.php" class="nav-link">
+                  <i class="far fa-file nav-icon"></i>
+                  <p>Student's Summary of Grade</p>
+                </a>
+              </li>
+            </ul>
+          </li>
           <?php
             } elseif ($_SESSION['role'] == "Adviser") {
           ?>
@@ -80,6 +109,37 @@
           <?php
             } elseif ($_SESSION['role'] == "Faculty Staff") {
             } elseif ($_SESSION['role'] == "Student") {
+          ?>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-file"></i>
+              <p>
+                Students' Forms
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../grade/student.record.php" class="nav-link">
+                  <i class="far fa-file nav-icon"></i>
+                  <p>Student's Permanent Record</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../forms/student.data.curriculum.php" class="nav-link">
+                  <i class="far fa-file nav-icon"></i>
+                  <p>Student's Curriculum</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../grade/summary.grade.php" class="nav-link">
+                  <i class="far fa-file nav-icon"></i>
+                  <p>Student's Summary of Grade</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <?php
             }
           ?>
         </ul>

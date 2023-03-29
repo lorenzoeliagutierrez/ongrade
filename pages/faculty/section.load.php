@@ -12,7 +12,7 @@ $subj_desc = $_GET['subj_desc'];
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Dashboard</title>
+  <title>Dashboard | OnGrade - Bacoor</title>
 
   <?php include '../../includes/links.php'; ?>
 
@@ -69,7 +69,7 @@ $subj_desc = $_GET['subj_desc'];
               </thead>
               <tbody>
                 <?php
-                $load_info = mysqli_query($conn, "SELECT * FROM tbl_schedules LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_schedules.subj_id WHERE faculty_id = '$faculty_id' AND class_code = '$class_code' AND acad_year = '$_SESSION[active_acadyear]' AND semester = '$_SESSION[active_semester]'");
+                $load_info = mysqli_query($conn, "SELECT * FROM tbl_schedules LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_schedules.subj_id WHERE faculty_id = '$faculty_id' AND class_code = '$class_code' ");
 
                 while ($row = mysqli_fetch_array($load_info))  {
                 ?>
