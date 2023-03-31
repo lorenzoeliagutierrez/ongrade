@@ -161,7 +161,13 @@ if ($_SESSION['role'] == "Student") {
                                 <b><?php echo $row['fullname']; ?>'s </b> Permanent Record for <b><?php echo $semester .' - '. $acadyear?></b>
                             </h3>
                             <div class="card-tools">
+                                <?php
+                                if ($_SESSION['role'] == "Super Administrator" || $_SESSION['role'] == "Registrar") {
+                                ?>
                                 <a type="submit" class="btn btn-primary btn-sm" name="submit">Permanent Record</a>
+                                <?php
+                                }
+                                ?>
                             </div>
                         </div>
                         <div class="card-body">
@@ -254,25 +260,6 @@ if ($_SESSION['role'] == "Student") {
     <!-- ./wrapper -->
 
     <?php include '../../includes/script.php'; ?>
-    <script>
-        $(function () {
-            $("#example1").DataTable({
-                "responsive": true, "lengthChange": false, "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": false,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true,
-            });
-        });
-    </script>
-
 </body>
 
 </html>

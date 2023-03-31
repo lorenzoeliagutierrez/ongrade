@@ -98,16 +98,18 @@
           <?php
             } elseif ($_SESSION['role'] == "Adviser") {
           ?>
+          <?php
+            } elseif ($_SESSION['role'] == "Faculty Staff") {
+          ?>
           <li class="nav-item">
-            <a href="index.php" class="nav-link active">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
+            <a href="../faculty/view.load.php" class="nav-link">
+              <i class="nav-icon fas fa-book"></i>
               <p>
-                Dashboard
+                Subjects Loads
               </p>
             </a>
           </li>
           <?php
-            } elseif ($_SESSION['role'] == "Faculty Staff") {
             } elseif ($_SESSION['role'] == "Student") {
           ?>
           <li class="nav-item">

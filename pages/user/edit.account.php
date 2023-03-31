@@ -51,17 +51,24 @@ require '../../includes/session.php';
                                 <?php
                                 
                                 if ($_SESSION['role'] == "Student") {
-
                                     $user_info = mysqli_query($conn, "SELECT * FROM tbl_students WHERE stud_id = '$_SESSION[id]'");
                                     $row = mysqli_fetch_array($user_info);
 
                                 } elseif ($_SESSION['role'] == "Super Administrator") {
+                                    $user_info = mysqli_query($conn, "SELECT * FROM tbl_super_admins WHERE sa_id = '$_SESSION[id]'");
+                                    $row = mysqli_fetch_array($user_info);
 
                                 } elseif ($_SESSION['role'] == "Adviser") {
+                                    $user_info = mysqli_query($conn, "SELECT * FROM tbl_faculties WHERE faculty_id = '$_SESSION[id]'");
+                                    $row = mysqli_fetch_array($user_info);
                                     
                                 } elseif ($_SESSION['role'] == "Faculty Staff") {
+                                    $user_info = mysqli_query($conn, "SELECT * FROM tbl_faculties_staff WHERE faculty_id = '$_SESSION[id]'");
+                                    $row = mysqli_fetch_array($user_info);
                                     
                                 }  elseif ($_SESSION['role'] == "Registrar") {
+                                    $user_info = mysqli_query($conn, "SELECT * FROM tbl_admins WHERE admin_id = '$_SESSION[id]'");
+                                    $row = mysqli_fetch_array($user_info);
                                     
                                 }
                                 
@@ -83,21 +90,21 @@ require '../../includes/session.php';
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label>Email</label>
-                                                    <input class="form-control" type="text" name="emal" value="<?php echo $row['email']?>">
+                                                    <input class="form-control" type="email" name="email" value="<?php echo $row['email']?>">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Password</label>
-                                                    <input class="form-control" type="password" name="password">
+                                                    <label>New Password</label>
+                                                    <input class="form-control" type="password" name="password" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label>Confirm Password</label>
-                                                    <input class="form-control" type="password" name="confirm_pass">
+                                                    <input class="form-control" type="password" name="confirm_pass" required>
                                                 </div>
                                             </div>
 
@@ -106,8 +113,7 @@ require '../../includes/session.php';
                                     <!-- /.card-body -->
                                     <div class="card-footer">
                                         <button type="submit" class="btn btn-primary btn-sm float-right"
-                                            name="submit">Search
-                                            Curriculum</button>
+                                            name="submit">Update Account</button>
                                     </div>
                                 </form>
                                 <!-- /.card-footer-->
@@ -131,25 +137,6 @@ require '../../includes/session.php';
     <!-- ./wrapper -->
 
     <?php include '../../includes/script.php'; ?>
-    <script>
-        $(function () {
-            $("#example1").DataTable({
-                "responsive": true, "lengthChange": false, "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": false,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true,
-            });
-        });
-    </script>
-
 </body>
 
 </html>

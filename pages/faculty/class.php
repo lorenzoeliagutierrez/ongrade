@@ -14,7 +14,7 @@ $section = $_GET['section'];
   <title>Dashboard | OnGrade - Bacoor</title>
 
   <?php include '../../includes/links.php'; ?>
-  <link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
+  
 
 </head>
 
@@ -294,38 +294,6 @@ $section = $_GET['section'];
   <!-- ./wrapper -->
 
   <?php include '../../includes/script.php'; ?>
-  <!-- Toastr -->
-  <script src="../../plugins/toastr/toastr.min.js"></script>
-  <script>
-    $(function () {
-      $("#example1").DataTable({
-        "responsive": true, "lengthChange": false, "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
-      $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": true,
-        "searching": true,
-        "ordering": false,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      });
-    });
-    <?php
-    if (isset($_SESSION['update_success'])) {
-      ?>
-      $(function () {
-        toastr.success('Update Success.', 'Success')
-      });
-      <?php
-    }
-    unset($_SESSION['update_success']);
-    ?>
-  </script>
-
-
 </body>
 
 </html>

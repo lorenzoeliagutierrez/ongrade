@@ -30,9 +30,11 @@ if (isset($_POST['submit'])) {
         }
 
         $_SESSION['update_success'] = true;
+        header("location: ../edit.account.php");
 
     } else {
         $_SESSION['password_unmatch'] = true;
+        header("location: ../edit.account.php");
 
     }
 

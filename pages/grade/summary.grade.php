@@ -63,7 +63,7 @@ if (isset($_GET['stud_id'])) {
               </div>
           </div>
           <div class="card-body">
-            <table id="example2" class="table table-bordered table-hover">
+            <table id="example3" class="table table-bordered table-hover">
               <thead>
                 <tr>
                   <th>Subject Code</th>
@@ -143,25 +143,6 @@ if (isset($_GET['stud_id'])) {
   <!-- ./wrapper -->
 
   <?php include '../../includes/script.php'; ?>
-    <script>
-    $(function () {
-      $("#example1").DataTable({
-        "responsive": true, "lengthChange": false, "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-      
-      $('#example2').DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": false,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      });
-    });
-  </script>
-
 </body>
 
 </html>

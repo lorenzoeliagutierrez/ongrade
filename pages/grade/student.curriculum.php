@@ -60,7 +60,7 @@ require '../../includes/session.php';
                                                 <div class="form-group">
                                                     <label>Student</label>
                                                     <select class="form-control select2" name="stud_id"
-                                                        style="width: 100%;">
+                                                        style="width: 100%;" required>
                                                         <option selected disabled>Select Student</option>
                                                         <?php
                                                         $stud_info = mysqli_query($conn, "SELECT stud_id, CONCAT(lastname, ', ', firstname, ' ', middlename) as fullname FROM tbl_students ORDER BY lastname ASC");
@@ -76,9 +76,12 @@ require '../../includes/session.php';
                                     </div>
                                     <!-- /.card-body -->
                                     <div class="card-footer">
-                                        <button type="submit" class="btn btn-primary btn-sm float-right"
+                                        <button type="submit" class="btn btn-primary btn-sm float-right ml-2"
                                             name="submit">Search
                                             Curriculum</button>
+                                        <button type="submit" class="btn btn-primary btn-sm float-right"
+                                            name="submit" value="empty">Search
+                                            Empty Curriculum</button>
                                     </div>
                                 </form>
                                 <?php
@@ -86,7 +89,13 @@ require '../../includes/session.php';
                                     $stud_info = mysqli_query($conn, "SELECT * FROM tbl_schoolyears WHERE stud_id = '$_POST[stud_id]' AND ay_id = '$_SESSION[active_acadyear]' AND sem_id = '$_SESSION[active_semester]'");
                                     $row = mysqli_fetch_array($stud_info);
 
-                                    header("location: ../forms/student.data.curriculum.php?stud_id=".$row['stud_id']."&course=".$row['course_id']);
+                                    if ($_POST['submit'] != "empty") {
+                                        header("location: ../forms/student.data.curriculum.php?stud_id=".$row['stud_id']."&course=".$row['course_id']);
+
+                                    } else {
+                                        header("location: ../forms/student.empty.curriculum.php?stud_id=".$row['stud_id']."&course=".$row['course_id']);
+
+                                    }
                                 }
                                 ?>
                                 <!-- /.card-footer-->
@@ -110,25 +119,6 @@ require '../../includes/session.php';
     <!-- ./wrapper -->
 
     <?php include '../../includes/script.php'; ?>
-    <script>
-        $(function () {
-            $("#example1").DataTable({
-                "responsive": true, "lengthChange": false, "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": false,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true,
-            });
-        });
-    </script>
-
 </body>
 
 </html>

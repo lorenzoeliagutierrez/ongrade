@@ -1,7 +1,13 @@
 <?php
 require '../../includes/session.php';
 
-$faculty_id = $_GET['faculty_id'];
+if (isset($_GET['faculty_id'])) {
+  $faculty_id = $_GET['faculty_id'];
+
+} else {
+  $faculty_id = $_SESSION['id'];
+
+}
 
 if (isset($_POST['semester']) && isset($_POST['acadyear'])) {
   $acadyear = $_POST['acadyear'];
@@ -38,7 +44,7 @@ if (isset($_POST['semester']) && isset($_POST['acadyear'])) {
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">Subject's Loads</h1>
+              <h1 class="m-0">Subjects Loads</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -133,7 +139,7 @@ if (isset($_POST['semester']) && isset($_POST['acadyear'])) {
                 ?>
                 <tr>
                   <td><b><?php echo $row['class_code'].'</b> - '. $row['subj_desc']; ?></td>
-                  <td><a href="section.load.php?class_code=<?php echo $row['class_code']; ?>&faculty_id=<?php echo $row['faculty_id']; ?>&subj_desc=<?php echo $row['subj_desc']; ?>" class="btn btn-primary btn-sm">View Sections</a>
+                  <td><a href="section.load.php?class_code=<?php echo $row['class_code']; ?>&faculty_id=<?php echo $row['faculty_id']; ?>&subj_desc=<?php echo $row['subj_desc']; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>" class="btn btn-primary btn-sm">View Sections</a>
                   </td>
                 </tr>
                 <?php
@@ -165,25 +171,6 @@ if (isset($_POST['semester']) && isset($_POST['acadyear'])) {
   <!-- ./wrapper -->
 
   <?php include '../../includes/script.php'; ?>
-    <script>
-    $(function () {
-      $("#example1").DataTable({
-        "responsive": true, "lengthChange": false, "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-      
-      $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": true,
-        "searching": true,
-        "ordering": false,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      });
-    });
-  </script>
-
 </body>
 
 </html>

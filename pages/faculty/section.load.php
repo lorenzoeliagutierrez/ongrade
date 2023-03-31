@@ -4,6 +4,14 @@ require '../../includes/session.php';
 $faculty_id = $_GET['faculty_id'];
 $class_code = $_GET['class_code'];
 $subj_desc = $_GET['subj_desc'];
+
+if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
+  $acadyear = $_GET['acadyear'];
+  $semester = $_GET['semester'];
+} else {
+  $acadyear = $_SESSION['active_acadyear'];
+  $semester = $_SESSION['active_semester'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -69,7 +77,11 @@ $subj_desc = $_GET['subj_desc'];
               </thead>
               <tbody>
                 <?php
-                $load_info = mysqli_query($conn, "SELECT * FROM tbl_schedules LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_schedules.subj_id WHERE faculty_id = '$faculty_id' AND class_code = '$class_code' ");
+                $load_info = mysqli_query($conn, "SELECT * FROM tbl_schedules LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_schedules.subj_id
+                WHERE faculty_id = '$faculty_id'
+                AND class_code = '$class_code'
+                AND acad_year = '$acadyear'
+                AND semester = '$semester'");
 
                 while ($row = mysqli_fetch_array($load_info))  {
                 ?>
@@ -80,7 +92,7 @@ $subj_desc = $_GET['subj_desc'];
                   <td><?php echo $row['room']; ?></td>
                   <td>
                     <a href="class.php?class_id=<?php echo $row['class_id']; ?>&section=<?php echo $row['section']; ?>" class="btn btn-primary btn-sm">View Class</a>
-                    <a href="class.php?class_id=<?php echo $row['class_id']?>" class="btn btn-primary btn-sm">View ROG</a>
+                    <a href="../forms/rog.php?class_code=<?php echo $row['class_code']?>&section=<?php echo $row['section']; ?>" class="btn btn-primary btn-sm">View ROG</a>
                     <a href="class.php?class_id=<?php echo $row['class_id']?>" class="btn btn-primary btn-sm">View Class List</a>
                   </td>
                 </tr>
@@ -113,25 +125,6 @@ $subj_desc = $_GET['subj_desc'];
   <!-- ./wrapper -->
 
   <?php include '../../includes/script.php'; ?>
-    <script>
-    $(function () {
-      $("#example1").DataTable({
-        "responsive": true, "lengthChange": false, "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-      
-      $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": true,
-        "searching": true,
-        "ordering": false,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      });
-    });
-  </script>
-
 </body>
 
 </html>
