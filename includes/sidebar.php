@@ -45,7 +45,7 @@
             </a>
           </li>
           <?php
-            if ($_SESSION['role'] == "Super Administrator") {
+            if ($_SESSION['role'] == "Super Administrator") { /////////////////////// Super Administrator sidebar
           ?>
           <li class="nav-item">
             <a href="../dashboard/index.php" class="nav-link active">
@@ -56,13 +56,21 @@
             </a>
           </li>
           <?php
-            } elseif ($_SESSION['role'] == "Registrar") {
+            } elseif ($_SESSION['role'] == "Registrar") { /////////////////////// Registrar sidebar
           ?>
           <li class="nav-item">
             <a href="../faculty/faculty.load.php" class="nav-link">
               <i class="nav-icon fas fa-users"></i>
               <p>
                 Faculty's Load
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="../student/list.students.php" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                Student List
               </p>
             </a>
           </li>
@@ -96,10 +104,10 @@
             </ul>
           </li>
           <?php
-            } elseif ($_SESSION['role'] == "Adviser") {
+            } elseif ($_SESSION['role'] == "Adviser") { /////////////////////// Adviser sidebar
           ?>
           <?php
-            } elseif ($_SESSION['role'] == "Faculty Staff") {
+            } elseif ($_SESSION['role'] == "Faculty Staff") { /////////////////////// Faculty Staff sidebar
           ?>
           <li class="nav-item">
             <a href="../faculty/view.load.php" class="nav-link">
@@ -110,7 +118,7 @@
             </a>
           </li>
           <?php
-            } elseif ($_SESSION['role'] == "Student") {
+            } elseif ($_SESSION['role'] == "Student") { /////////////////////// Student sidebar
           ?>
           <li class="nav-item">
             <a href="#" class="nav-link">

@@ -3,6 +3,14 @@ require '../../includes/session.php';
 
 $class_id = $_GET['class_id'];
 $section = $_GET['section'];
+
+if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
+  $acadyear = $_GET['acadyear'];
+  $semester = $_GET['semester'];
+} else {
+  $acadyear = $_SESSION['active_acadyear'];
+  $semester = $_SESSION['active_semester'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -53,7 +61,7 @@ $section = $_GET['section'];
           <div class="card-header">
             <h3 class="card-title"><b>
                 <?php echo $section ?>'s
-              </b> List of Students</h3>
+              </b> List of Students <b>(<?php echo $semester .' - '. $acadyear?>)</b></h3>
 
             <div class="card-tools">
               <a href="grade.class.php?class_id=<?php echo $class_id; ?>&section=<?php echo $section; ?>"
@@ -91,8 +99,8 @@ $section = $_GET['section'];
                 LEFT JOIN tbl_courses ON tbl_courses.course_id = tbl_schoolyears.course_id
                 WHERE tbl_schedules.class_id = '$class_id'
                 AND tbl_schedules.section = '$section' 
-                AND tbl_schoolyears.ay_id = '$_SESSION[active_acadyear]'
-                AND tbl_schoolyears.sem_id = '$_SESSION[active_semester]'
+                AND tbl_schoolyears.ay_id = '$acadyear'
+                AND tbl_schoolyears.sem_id = '$semester'
                 AND tbl_schoolyears.remark = 'Approved'");
 
                 while ($row = mysqli_fetch_array($load_info)) {

@@ -91,9 +91,9 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                   <td><?php echo $row['day']; ?></td>
                   <td><?php echo $row['room']; ?></td>
                   <td>
-                    <a href="class.php?class_id=<?php echo $row['class_id']; ?>&section=<?php echo $row['section']; ?>" class="btn btn-primary btn-sm">View Class</a>
-                    <a href="../forms/rog.php?class_code=<?php echo $row['class_code']?>&section=<?php echo $row['section']; ?>" class="btn btn-primary btn-sm">View ROG</a>
-                    <a href="class.php?class_id=<?php echo $row['class_id']?>" class="btn btn-primary btn-sm">View Class List</a>
+                    <a href="class.php?class_id=<?php echo $row['class_id']; ?>&section=<?php echo $row['section']; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>" class="btn btn-primary btn-sm">View Class</a>
+                    <a href="../forms/rog.php?class_code=<?php echo $row['class_code']?>&section=<?php echo $row['section']; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>" class="btn btn-primary btn-sm">View ROG</a>
+                    <a href="../forms/class.list.php?class_code=<?php echo $row['class_code']?>&section=<?php echo $row['section']; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>" class="btn btn-primary btn-sm">View Class List</a>
                   </td>
                 </tr>
                 <?php

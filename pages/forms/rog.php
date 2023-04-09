@@ -15,8 +15,16 @@ class PDF extends FPDF
         include '../../includes/conn.php';
         $class_code = $_GET['class_code'];
         $section = $_GET['section'];
+        
+        if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
+            $acadyear = $_GET['acadyear'];
+            $semester = $_GET['semester'];
+        } else {
+            $acadyear = $_SESSION['active_acadyear'];
+            $semester = $_SESSION['active_semester'];
+        }
         // Logo(x axis, y axis, height, width)
-        // $this->Image('./../../img/logo.png', 27, 3, 19, 19);
+        $this->Image('../../docs/assets/img/logo.png', 27, 3, 19, 19);
         // font(font type,style,font size)
         $this->SetFont('Times', 'B', 28);
         $this->SetTextColor(255, 0, 0);
@@ -32,7 +40,7 @@ class PDF extends FPDF
 
         // //cell(width,height,text,border,end line,[align])
         // $test = utf8_decode("Piñas");
-        $this->Cell(0, 3, '96 Bayanan, City of Bacoor ', 0, 0, 'C');
+        $this->Cell(0, 3, '96 Bayanan, City of Bacoor, Cavite', 0, 0, 'C');
         // Line break
         $this->Ln(4);
         $this->SetFont('Arial', 'B', 12);
@@ -44,31 +52,22 @@ class PDF extends FPDF
         // //cell(width,height,text,border,end line,[align])
         $this->Cell(0, 6, 'REPORTS OF GRADES', 0, 1, 'C');
         $this->SetFont('Arial', 'B', 10);
-        $this->Cell(0, 4, $_SESSION['active_semester'] . ' ' . $_SESSION['active_acadyear'], 0, 1, 'C');
+        $this->Cell(0, 4, $semester . ' ' . $acadyear, 0, 1, 'C');
 
         $this->Ln(3);
-        $que3 = mysqli_num_rows(mysqli_query($conn, "SELECT *,CONCAT(tbl_students.lastname, ', ', tbl_students.firstname, ' ', tbl_students.middlename) as fullname 
+        $class_info = mysqli_query($conn, "SELECT *
                 FROM tbl_enrolled_subjects 
                 LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_enrolled_subjects.subj_id
-                LEFT JOIN tbl_students ON tbl_students.stud_id = tbl_enrolled_subjects.stud_id
-                LEFT JOIN tbl_schoolyears ON tbl_schoolyears.stud_id = tbl_students.stud_id
+                LEFT JOIN tbl_schoolyears ON tbl_schoolyears.stud_id = tbl_enrolled_subjects.stud_id
                 LEFT JOIN tbl_schedules ON tbl_schedules.class_id = tbl_enrolled_subjects.class_id
-                LEFT JOIN tbl_courses ON tbl_courses.course_id = tbl_schoolyears.course_id
                 WHERE tbl_schedules.class_code = '$class_code'
                 AND tbl_schedules.section = '$section' 
-                AND tbl_schoolyears.ay_id = '$_SESSION[active_acadyear]'
-                AND tbl_schoolyears.sem_id = '$_SESSION[active_semester]'
-                AND tbl_schoolyears.remark = 'Approved'"));
-
-        $qwer = mysqli_fetch_array(
-            mysqli_query(
-                $conn,
-                "SELECT * 
-    FROM tbl_schedules 
-    LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_schedules.subj_id 
-    WHERE tbl_schedules.class_code = '$class_code' and section = '$section' and acad_year = '$_SESSION[active_acadyear]' and semester = '$_SESSION[active_semester]'"
-            )
-        );
+                AND tbl_schoolyears.ay_id = '$acadyear'
+                AND tbl_schoolyears.sem_id = '$semester'
+                AND tbl_schoolyears.remark = 'Approved'");
+        
+        $class_size = mysqli_num_rows($class_info);
+        $row = mysqli_fetch_array($class_info);
 
         $this->SetFont('Arial', '', '11');
         $this->Cell(25, 5, 'Course Code:', 0, 0);
@@ -76,27 +75,27 @@ class PDF extends FPDF
         $fontsize3 = 11;
         $tempFontSize3 = $fontsize3;
         $cellwidth3 = 23;
-        while ($this->GetStringWidth($qwer['class_code']) > $cellwidth3) {
+        while ($this->GetStringWidth($class_code) > $cellwidth3) {
             $this->SetFontSize($tempFontSize3 -= 0.1);
         }
-        $this->Cell(23, 5, $qwer['class_code'], 'B', 0, 'C');
+        $this->Cell(23, 5, $class_code, 'B', 0, 'C');
         $this->SetFont('Arial', '', '11');
         $this->Cell(23, 5, 'Course Title:', 0, 0);
         $fontsize = 11;
         $tempFontSize = $fontsize;
         $cellwidth = 77;
-        while ($this->GetStringWidth($qwer['subj_desc']) > $cellwidth) {
+        while ($this->GetStringWidth($row['subj_desc']) > $cellwidth) {
             $this->SetFontSize($tempFontSize -= 0.1);
         }
-        $this->Cell(77, 5, $qwer['subj_desc'], 'B', 0, 'C');
+        $this->Cell(77, 5, $row['subj_desc'], 'B', 0, 'C');
         $this->SetFont('Arial', '', '11');
         $this->Cell(25, 5, 'No. of Units:', 0, 0);
-        $this->Cell(22, 5, $qwer['unit_total'], 'B', 1, 'C');
+        $this->Cell(22, 5, $row['unit_total'], 'B', 1, 'C');
 
         $this->Cell(51, 5, 'Schedule (Time/Day/Room):', 0, 0);
-        $this->Cell(102, 5, $qwer['time'] . ' / ' . $qwer['day'] . ' / ' . $qwer['room'], 'B', 0, 'C');
+        $this->Cell(102, 5, $row['time'] . ' / ' . $row['day'] . ' / ' . $row['room'], 'B', 0, 'C');
         $this->Cell(20, 5, 'Class Size:', 0, 0);
-        $this->Cell(22, 5, $que3, 'B', 1, 'C');
+        $this->Cell(22, 5, $class_size, 'B', 1, 'C');
 
         $this->Image('../../docs/assets/img/rog.PNG', 10, 57, 197, 40);
 
@@ -426,8 +425,7 @@ class PDF extends FPDF
     function Footer()
     {
         include '../../includes/conn.php';
-        $class_code = $_GET['class_code'];
-        $section = $_GET['section'];
+        
         // Position at 1.5 cm from bottom
         $this->Rect(10, 241.7, 196.72, 70);
 
@@ -435,7 +433,7 @@ class PDF extends FPDF
         $this->SetFontSize(8);
         $this->Cell(20, 5, 'Prepared by:', 0, 0);
         $this->SetFont('Arial', 'B', '10');
-        $this->Cell(50, 5,'', 'B', 0, 'C'); //=====================PROFESSOR NAME=================
+        $this->Cell(50, 5, $_SESSION['name'], 'B', 0, 'C'); //=====================PROFESSOR NAME=================
         $this->Cell(5, 5, '', 0, 0);
         $this->Cell(30, 5, date('M d, Y'), 'B', 1, 'C');
 
@@ -511,36 +509,42 @@ $pdf->AliasNbPages();
 $pdf->SetMargins(10, 10, 10);
 $pdf->AddPage();
 // $pdf->SetAutoPageBreak(true,112);
+if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
+    $acadyear = $_GET['acadyear'];
+    $semester = $_GET['semester'];
+  
+  } else {
+    $acadyear = $_SESSION['active_acadyear'];
+    $semester = $_SESSION['active_semester'];
+    
+  }
 
 $pdf->SetFont('Arial', '', '11');
 $pdf->SetXY(10, 91.7);
 $pdf->SetFont('Arial', '', '11');
 $pdf->SetXY(10, 91.7);
-$que = mysqli_query(
-    $conn,
-    "SELECT *, CONCAT(tbl_students.lastname, ', ', tbl_students.firstname, ' ', tbl_students.middlename)  as fullname FROM tbl_enrolled_subjects 
-    LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_enrolled_subjects.subj_id
-    LEFT JOIN tbl_students ON tbl_students.stud_id = tbl_enrolled_subjects.stud_id
-    LEFT JOIN tbl_schoolyears ON tbl_schoolyears.stud_id = tbl_students.stud_id
-    LEFT JOIN tbl_schedules ON tbl_schedules.class_id = tbl_enrolled_subjects.class_id
-    LEFT JOIN tbl_courses ON tbl_courses.course_id = tbl_schoolyears.course_id
-    WHERE tbl_schedules.class_code = '$class_code'
-    AND tbl_schedules.section = '$section' 
-    AND tbl_schoolyears.ay_id = '$_SESSION[active_acadyear]'
-    AND tbl_schoolyears.sem_id = '$_SESSION[active_semester]'
-    AND tbl_schoolyears.remark = 'Approved' 
-    ORDER BY fullname"
-    );
+$que = mysqli_query($conn, "SELECT *, CONCAT(tbl_students.lastname, ', ', tbl_students.firstname, ' ', tbl_students.middlename)  as fullname
+                FROM tbl_enrolled_subjects 
+                LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_enrolled_subjects.subj_id
+                LEFT JOIN tbl_students ON tbl_students.stud_id = tbl_enrolled_subjects.stud_id
+                LEFT JOIN tbl_schoolyears ON tbl_schoolyears.stud_id = tbl_students.stud_id
+                LEFT JOIN tbl_schedules ON tbl_schedules.class_id = tbl_enrolled_subjects.class_id
+                LEFT JOIN tbl_courses ON tbl_courses.course_id = tbl_schoolyears.course_id
+                LEFT JOIN tbl_year_levels ON tbl_year_levels.year_id = tbl_schoolyears.year_id
+                WHERE tbl_schedules.class_code = '$class_code'
+                AND tbl_schedules.section = '$section' 
+                AND tbl_schoolyears.ay_id = '$acadyear'
+                AND tbl_schoolyears.sem_id = '$semester'
+                AND tbl_schoolyears.remark = 'Approved'
+                ORDER BY fullname");
 
 $y = $pdf->Gety();
 $xy = 5;
 $x = 1;
 
 while ($row = mysqli_fetch_array($que)) {
-    $qwe = mysqli_query($conn, "SELECT * FROM tbl_schoolyears LEFT JOIN tbl_year_levels ON tbl_year_levels.year_id = tbl_schoolyears.year_id where stud_id = '$row[stud_id]' AND sem_id = '$_SESSION[active_semester]' AND ay_id = '$_SESSION[active_acadyear]'");
-    while ($row1 = mysqli_fetch_array($qwe)) {
         // $pdf ->SetXY(10,$y+$xy);
-        $fullname = strtoupper(utf8_decode($row['fullname']));
+        $fullname = strtoupper($row['fullname']);
         # code...
         $pdf->Cell(8.98, 5, $x, 1, 0);
         $fontsize = 9;
@@ -554,10 +558,10 @@ while ($row = mysqli_fetch_array($que)) {
         $fontsize1 = 10;
         $tempFontSize2 = $fontsize1;
         $cellwidth1 = 22;
-        while ($pdf->GetStringWidth($row['course_abv'] . '-' . $row1['year_abv']) > $cellwidth1) {
+        while ($pdf->GetStringWidth($row['course_abv'] . '-' . $row['year_abv']) > $cellwidth1) {
             $pdf->SetFontSize($tempFontSize2 -= 0.1);
         }
-        $pdf->Cell(23.4, 5, $row['course_abv'] . '-' . $row1['year_abv'], 1, 0);
+        $pdf->Cell(23.4, 5, $row['course_abv'] . '-' . $row['year_abv'], 1, 0);
         $pdf->SetFont('Arial', '', '9');
         $pdf->Cell(10.5, 5, $row['prelim'], 1, 0, 'C');
         $pdf->Cell(9.5, 5, $row['midterm'], 1, 0, 'C');
@@ -583,17 +587,13 @@ while ($row = mysqli_fetch_array($que)) {
             $pdf->AddPage();
             $pdf->SetFont('Arial', '', '9');
             $pdf->SetXY(10, 91.7);
-
-
         } else if ($x == '61') {
             # code...
             $pdf->AddPage();
             $pdf->SetFont('Arial', '', '9');
             $pdf->SetXY(10, 91.7);
-
         }
-
-    }
+    
 }
 $pdf->SetFont('Arial', 'B', '12');
 
