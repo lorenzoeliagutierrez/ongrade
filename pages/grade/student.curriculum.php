@@ -63,7 +63,8 @@ require '../../includes/session.php';
                                                         style="width: 100%;" required>
                                                         <option selected disabled>Select Student</option>
                                                         <?php
-                                                        $stud_info = mysqli_query($conn, "SELECT stud_id, CONCAT(lastname, ', ', firstname, ' ', middlename) as fullname FROM tbl_students ORDER BY lastname ASC");
+                                                        $stud_info = mysqli_query($conn, "SELECT tbl_students.stud_id, CONCAT(lastname, ', ', firstname, ' ', middlename) as fullname FROM tbl_students
+                                                        LEFT JOIN tbl_schoolyears ON tbl_schoolyears.stud_id = tbl_students.stud_id WHERE sem_id = '$_SESSION[active_semester]' AND ay_id = '$_SESSION[active_acadyear]' ORDER BY lastname ASC");
                                                         while ($row = mysqli_fetch_array($stud_info)) {
                                                             ?>
                                                             <option value="<?php echo $row['stud_id'] ?>"><?php echo $row['fullname'] ?>

@@ -133,7 +133,10 @@ if (isset($_POST['semester']) && isset($_POST['acadyear'])) {
               </thead>
               <tbody>
                 <?php
-                $load_info = mysqli_query($conn, "SELECT * FROM tbl_schedules LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_schedules.subj_id WHERE faculty_id = '$faculty_id' AND acad_year = '$acadyear' AND semester = '$semester'");
+                $load_info = mysqli_query($conn, "SELECT * FROM tbl_schedules
+                LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_schedules.subj_id
+                WHERE faculty_id = '$faculty_id' AND acad_year = '$acadyear' AND semester = '$semester'
+                GROUP BY class_code");
 
                 while ($row = mysqli_fetch_array($load_info))  {
                 ?>

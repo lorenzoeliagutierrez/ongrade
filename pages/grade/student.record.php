@@ -151,7 +151,8 @@ if ($_SESSION['role'] == "Student") {
                 <!-- /.card -->
                 <?php
                     if (isset($stud_id)) {
-                    $stud_info = mysqli_query($conn, "SELECT *, CONCAT(lastname, ', ', firstname, ' ', middlename) as fullname FROM tbl_students WHERE stud_id = '$stud_id'");
+                    $stud_info = mysqli_query($conn, "SELECT *, CONCAT(lastname, ', ', firstname, ' ', middlename) as fullname FROM tbl_students 
+                    LEFT JOIN tbl_schoolyears ON tbl_schoolyears.stud_id = tbl_students.stud_id WHERE tbl_schoolyears.stud_id = '$stud_id' AND ay_id = '$acadyear' AND sem_id = '$semester'");
                     $row = mysqli_fetch_array($stud_info);
 
                     ?>
@@ -164,7 +165,7 @@ if ($_SESSION['role'] == "Student") {
                                 <?php
                                 if ($_SESSION['role'] == "Super Administrator" || $_SESSION['role'] == "Registrar") {
                                 ?>
-                                <a type="submit" class="btn btn-primary btn-sm" name="submit">Permanent Record</a>
+                                <a class="btn btn-primary btn-sm" href="../forms/student.permanent.record.php?stud_id=<?php echo $row['stud_id']?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>">Permanent Record</a>
                                 <?php
                                 }
                                 ?>
@@ -188,6 +189,9 @@ if ($_SESSION['role'] == "Student") {
                                     <?php
                                     $stud_info = mysqli_query($conn, "SELECT * FROM tbl_enrolled_subjects LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_enrolled_subjects.subj_id WHERE stud_id = '$stud_id' AND acad_year = '$acadyear' AND semester = '$semester'");
                                     while ($row2 = mysqli_fetch_array($stud_info)) {
+                                        if ($_SESSION['role'] == "Student" && $row['accounting_status'] == "Unpaid") {
+                                        
+                                        } else { 
                                         ?>
                                         <tr>
                                             <td>
@@ -234,7 +238,7 @@ if ($_SESSION['role'] == "Student") {
                                             ?>
                                         </tr>
                                         <?php
-                                    }
+                                    } }
                                     ?>
                                 </tbody>
                                 <tfoot>

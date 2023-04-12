@@ -58,8 +58,42 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
           <div class="card-header">
             <h3 class="card-title">Student List</h3>
             <div class="card-tools">
-                
+                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-md">Set Payment Status</button>
             </div>
+            <div class="modal fade" id="modal-md">
+                    <div class="modal-dialog modal-md">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Select Payment Status for <b>
+                              all students
+                            </b></h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <form action="userData/ctrl.edit.student.php"
+                          method="POST">
+                          <div class="modal-body">
+                            <div class="row justify-content-center">
+                              <div class="col-sm-12">
+                                <div class="form-group">
+                                  <label>Payment Status</label>
+                                  <select class="form-control" name="status">
+                                    <option>Paid</option>
+                                    <option>Unpaid</option>
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" name="submit_all" class="btn btn-primary">Save changes</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
           </div>
           <div class="card-body">
             <form method="POST">
@@ -106,7 +140,8 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                     OR course LIKE '%$search%'
                     OR year_level LIKE '%$search%'
                     OR year_abv LIKE '%$search%'
-                    OR stud_no LIKE '%$search%')
+                    OR stud_no LIKE '%$search%'
+                    OR accounting_status LIKE '%$search%')
                     ORDER BY lastname");
 
                     while ($row = mysqli_fetch_array($student_info))  {
@@ -115,22 +150,66 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                   <td><?php echo $row['fullname']?></td>
                   <td><?php echo $row['course_abv']?></td>
                   <td><?php echo $row['year_level']?></td>
-                  <td></td>
+                  <td><?php echo $row['accounting_status']?></td>
                   <td>
-                    <a href="" class="btn btn-primary btn-sm m-1">Subject Load</a>
-                    <a href="" class="btn btn-primary btn-sm m-1">Change payment status</a>
+                    <button class="btn btn-primary btn-sm m-1" data-toggle="modal" data-target="#modal-md<?php echo $row['stud_id']; ?>">Change payment status</button>
                     <button type="button" class="btn btn-primary btn-sm m-1" data-toggle="dropdown">
                       Forms
                     </button>
                     <ul class="dropdown-menu">
-                      <li class="dropdown-item"><a href="#">Curriculum</a></li>
-                      <li class="dropdown-item"><a href="#">Curriculum w/ data</a></li>
+                      <li class="dropdown-item"><a href="../forms/student.data.curriculum.php?stud_id=<?php echo $row['stud_id']?>">Curriculum</a></li>
+                      <li class="dropdown-item"><a href="../forms/student.data.curriculum.php?stud_id=<?php echo $row['stud_id']?>">Curriculum w/ data</a></li>
                       <li class="dropdown-divider"></li>
-                      <li class="dropdown-item"><a href="#">Permanent Record</a></li>
-                      <li class="dropdown-item"><a href="#">Summary of Grade</a></li>
+                      <li class="dropdown-item"><a href="../forms/student.permanent.record.php?stud_id=<?php echo $row['stud_id']?>">Permanent Record</a></li>
+                      <li class="dropdown-item"><a href="../grade/summary.grade.php?stud_id=<?php echo $row['stud_id']?>">Summary of Grade</a></li>
                     </ul>
                   </td>
                 </tr>
+                <!-- Modal for grade input -->
+                <div class="modal fade" id="modal-md<?php echo $row['stud_id']; ?>">
+                    <div class="modal-dialog modal-md">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Select Payment Status for <b>
+                              <?php echo strtoupper($row['fullname']); ?>
+                            </b></h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <form action="userData/ctrl.edit.student.php?stud_id=<?php echo $row['stud_id']?>"
+                          method="POST">
+                          <div class="modal-body">
+                            <div class="row justify-content-center">
+                              <div class="col-sm-12">
+                                <div class="form-group">
+                                  <label>Payment Status</label>
+                                  <select class="form-control" name="status">
+                                    <option selected><?php echo $row['accounting_status']?></option>
+                                    <?php
+                                    if ($row['accounting_status'] == "Paid") {
+                                    ?>
+                                    <option>Unpaid</option>
+                                    <?php
+                                    } else {
+                                    ?>
+                                    <option>Paid</option>
+                                    <?php
+                                    }
+                                    ?>
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
                 <?php
                 }}
                 ?>

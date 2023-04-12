@@ -163,7 +163,12 @@ while ($row3 = mysqli_fetch_array($year_sem)) {
                   $total_units = 0;
                      while($row2 = mysqli_fetch_array($squery)) {
                         $pdf ->Cell(5 ,4,'',0,0);
-                        $pdf ->Cell(10 ,4,$row2['numgrade'],'B',0);
+
+                        if ($_SESSION['role'] == "Student" && $syrow['accounting_status'] == "Unpaid") {
+                           $pdf ->Cell(10 ,4,$row2['numgrade'],'B',0);
+                        } else {
+                           $pdf ->Cell(10 ,4,$row2['numgrade'],'B',0);
+                        }
                         $pdf ->Cell(30 ,4,$row2['subj_code'],0,0);
                         $pdf ->Cell(90 ,4,$row2['subj_desc'],0,0);
                         $pdf ->Cell(10 ,4,$row2['unit_lec'],0,0);

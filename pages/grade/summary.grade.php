@@ -81,7 +81,7 @@ if (isset($_GET['stud_id'])) {
                 LEFT JOIN tbl_courses ON tbl_courses.course_id = tbl_schoolyears.course_id
                 LEFT JOIN tbl_semesters ON tbl_schoolyears.sem_id = tbl_semesters.semester
                 LEFT JOIN tbl_year_levels ON tbl_schoolyears.year_id = tbl_year_levels.year_id 
-                WHERE tbl_schoolyears.year_id IN ('1', '2', '3', '4') AND tbl_semesters.sem_id IN ('1', '2') AND stud_id = '$stud_id'
+                WHERE stud_id = '$stud_id'
                 ORDER BY tbl_year_levels.year_id ASC, tbl_semesters.sem_id ASC");
                 while ($row = mysqli_fetch_array($sy_info)) {
 
@@ -102,11 +102,27 @@ if (isset($_GET['stud_id'])) {
                     WHERE tbl_enrolled_subjects.stud_id = '$stud_id' AND tbl_subjects_new.course_id = '$row[course_id]' AND acad_year = '$row[ay_id]' AND semester = '$row[semester]'");
 
                     while ($row2 = mysqli_fetch_array($enrolled_subjects)) {
+
+                      $faculty_info = mysqli_query($conn, "SELECT *, CONCAT(faculty_lastname, ', ', faculty_firstname, ' ', faculty_middlename) AS faculty_name FROM tbl_faculties_staff
+                      LEFT JOIN tbl_schedules ON tbl_schedules.faculty_id = tbl_faculties_staff.faculty_id WHERE class_id = '$row2[class_id]'");
+
+                      $row3 = mysqli_fetch_array($faculty_info);
                 ?>
                 
                 <tr>
                   <td><?php echo $row2['subj_code']?></td>
-                  <td><?php echo $row2['subj_desc']?></td>
+                  <td><?php echo $row2['subj_desc']?><br><?php echo $row3['faculty_name']?></td>
+                  <?php
+                  if ($_SESSION['role'] == "Student" && $row['accounting_status'] == "Unpaid") {
+                  ?>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <?php
+                  } else {
+                  ?>
                   <td><?php echo $row2['prelim']?></td>
                   <td><?php echo $row2['midterm']?></td>
                   <td><?php echo $row2['finalterm']?></td>
@@ -114,6 +130,7 @@ if (isset($_GET['stud_id'])) {
                   <td><?php echo $row2['ofgrade']?></td>
                 </tr>
                 <?php
+                  }
                     }
                 }
                 ?>

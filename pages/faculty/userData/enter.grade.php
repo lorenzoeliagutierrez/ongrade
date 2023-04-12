@@ -20,6 +20,50 @@ if (isset($_POST['submit'])) {
         if (!empty($_POST['midterm']) && !empty($_POST['finalterm'])) {
             $ofgrade = number_format((float) (($midterm * 0.4) + ($finalterm * 0.6)), 2, '.', '');
 
+            if ($ofgrade <= 74) {
+                $numgrade = "5.00";
+                $remarks = "Failed";
+        
+            } elseif ($ofgrade <= 79.49) {
+                $numgrade = "3.00";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 82.49) {
+                $numgrade = "2.75";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 84.49) {
+                $numgrade = "2.50";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 87.49) {
+                $numgrade = "2.25";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 92.49) {
+                $numgrade = "2.00";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 95.49) {
+                $numgrade = "1.75";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 97.49) {
+                $numgrade = "1.50";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 99.99) {
+                $numgrade = "1.25";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 100) {
+                $numgrade = "1.00";
+                $remarks = "Passed";
+        
+            } else {
+        
+            }
+
         } elseif (($midterm == 0) || ($finalterm == 0)) {
             $numgrade = "INC";
             $remarks = "INC";
@@ -32,55 +76,55 @@ if (isset($_POST['submit'])) {
         if (!empty($_POST['prelim']) && !empty($_POST['midterm']) && !empty($_POST['finalterm'])) {
             $ofgrade = number_format((float) ($prelim + $midterm + $finalterm) / 3, 2, '.', '');
 
+            if ($ofgrade <= 74) {
+                $numgrade = "5.00";
+                $remarks = "Failed";
+        
+            } elseif ($ofgrade <= 79.49) {
+                $numgrade = "3.00";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 82.49) {
+                $numgrade = "2.75";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 84.49) {
+                $numgrade = "2.50";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 87.49) {
+                $numgrade = "2.25";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 92.49) {
+                $numgrade = "2.00";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 95.49) {
+                $numgrade = "1.75";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 97.49) {
+                $numgrade = "1.50";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 99.99) {
+                $numgrade = "1.25";
+                $remarks = "Passed";
+        
+            } elseif ($ofgrade <= 100) {
+                $numgrade = "1.00";
+                $remarks = "Passed";
+        
+            } else {
+        
+            }
+
         } elseif (($prelim == 0) || ($midterm == 0) || ($finalterm == 0)) {
             $numgrade = "INC";
             $remarks = "INC";
 
         }
-
-    }
-
-    if ($ofgrade <= 74) {
-        $numgrade = "5.00";
-        $remarks = "Failed";
-
-    } elseif ($ofgrade <= 79.49) {
-        $numgrade = "3.00";
-        $remarks = "Passed";
-
-    } elseif ($ofgrade <= 82.49) {
-        $numgrade = "2.75";
-        $remarks = "Passed";
-
-    } elseif ($ofgrade <= 84.49) {
-        $numgrade = "2.50";
-        $remarks = "Passed";
-
-    } elseif ($ofgrade <= 87.49) {
-        $numgrade = "2.25";
-        $remarks = "Passed";
-
-    } elseif ($ofgrade <= 92.49) {
-        $numgrade = "2.00";
-        $remarks = "Passed";
-
-    } elseif ($ofgrade <= 95.49) {
-        $numgrade = "1.75";
-        $remarks = "Passed";
-
-    } elseif ($ofgrade <= 97.49) {
-        $numgrade = "1.50";
-        $remarks = "Passed";
-
-    } elseif ($ofgrade <= 99.99) {
-        $numgrade = "1.25";
-        $remarks = "Passed";
-
-    } elseif ($ofgrade <= 100) {
-        $numgrade = "1.00";
-        $remarks = "Passed";
-
-    } else {
 
     }
 

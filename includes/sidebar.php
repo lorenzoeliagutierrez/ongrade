@@ -11,7 +11,7 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="../../docs/assets/img/logo.png" class="img-circle elevation-2 mt-2" alt="User Image">
+          <img style="width: 40px; height: 40px;" src="data:image/jpeg;base64,<?php echo base64_encode($row['img']) ?>" class="img-circle elevation-2 mt-2" alt="User Image">
         </div>
         <div class="info">
           <a class="d-block"><?php echo $_SESSION['name']; ?></a>
@@ -48,12 +48,49 @@
             if ($_SESSION['role'] == "Super Administrator") { /////////////////////// Super Administrator sidebar
           ?>
           <li class="nav-item">
-            <a href="../dashboard/index.php" class="nav-link active">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
+            <a href="../faculty/faculty.load.php" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
               <p>
-                Dashboard
+                Faculty's Load
               </p>
             </a>
+          </li>
+          <li class="nav-item">
+            <a href="../student/list.students.php" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                Student List
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-file"></i>
+              <p>
+                Students' Forms
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../grade/student.record.php" class="nav-link">
+                  <i class="far fa-file nav-icon"></i>
+                  <p>Student's Permanent Record</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../grade/student.curriculum.php" class="nav-link">
+                  <i class="far fa-file nav-icon"></i>
+                  <p>Student's Curriculum</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../grade/student.summary.php" class="nav-link">
+                  <i class="far fa-file nav-icon"></i>
+                  <p>Student's Summary of Grade</p>
+                </a>
+              </li>
+            </ul>
           </li>
           <?php
             } elseif ($_SESSION['role'] == "Registrar") { /////////////////////// Registrar sidebar

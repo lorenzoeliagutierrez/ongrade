@@ -4,6 +4,12 @@ ob_start();
 
 include 'conn.php';
 
+if (isset($_SESSION['role'])) {
+
+} else {
+    header("location: ../login/login.php");
+}
+
 $acad_year = mysqli_query($conn, "SELECT * FROM tbl_active_acads
 LEFT JOIN tbl_acadyears ON tbl_acadyears.ay_id = tbl_active_acads.ay_id");
 
