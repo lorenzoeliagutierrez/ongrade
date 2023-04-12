@@ -189,6 +189,11 @@ if ($_SESSION['role'] == "Student") {
                                     <?php
                                     $stud_info = mysqli_query($conn, "SELECT * FROM tbl_enrolled_subjects LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_enrolled_subjects.subj_id WHERE stud_id = '$stud_id' AND acad_year = '$acadyear' AND semester = '$semester'");
                                     while ($row2 = mysqli_fetch_array($stud_info)) {
+                                        $faculty_info = mysqli_query($conn, "SELECT *, CONCAT(faculty_lastname, ', ', faculty_firstname, ' ', faculty_middlename) AS faculty_name FROM tbl_faculties_staff
+                                        LEFT JOIN tbl_schedules ON tbl_schedules.faculty_id = tbl_faculties_staff.faculty_id WHERE class_id = '$row2[class_id]'");
+
+                                        $row3 = mysqli_fetch_array($faculty_info);
+
                                         if ($_SESSION['role'] == "Student" && $row['accounting_status'] == "Unpaid") {
                                         
                                         } else { 
@@ -198,7 +203,7 @@ if ($_SESSION['role'] == "Student") {
                                                 <?php echo $row2['subj_code']; ?>
                                             </td>
                                             <td>
-                                                <?php echo $row2['subj_desc']; ?>
+                                                <?php echo $row2['subj_desc']; ?><br>Instructor: <?php echo $row3['faculty_name']; ?>
                                             </td>
                                             <td>
                                                 <?php echo $row2['prelim']; ?>

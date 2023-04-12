@@ -111,7 +111,7 @@ if (isset($_GET['stud_id'])) {
                 
                 <tr>
                   <td><?php echo $row2['subj_code']?></td>
-                  <td><?php echo $row2['subj_desc']?><br><?php echo $row3['faculty_name']?></td>
+                  <td><?php echo $row2['subj_desc']?><br>Instructor: <?php echo $row3['faculty_name']?></td>
                   <?php
                   if ($_SESSION['role'] == "Student" && $row['accounting_status'] == "Unpaid") {
                   ?>

@@ -104,7 +104,7 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                 AND tbl_schoolyears.remark = 'Approved'");
 
                 while ($row = mysqli_fetch_array($load_info)) {
-                  $last_updated = new DateTime($row['last_updated']);
+                  $last_updated = new DateTime($row['last_update']);
                   ?>
                   <tr>
                     <td>

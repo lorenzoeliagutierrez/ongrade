@@ -596,6 +596,7 @@ while ($row = mysqli_fetch_array($que)) {
     
 }
 $pdf->SetFont('Arial', 'B', '12');
+$pdf->Cell(200, 5, '*********sfac****************************Nothing Follows ' . ($x - 1) . ' Students****************************sfac**********', 0, 1, 'C');
 
 
 

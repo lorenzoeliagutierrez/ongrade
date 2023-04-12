@@ -78,7 +78,7 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                               <div class="col-sm-12">
                                 <div class="form-group">
                                   <label>Payment Status</label>
-                                  <select class="form-control" name="status">
+                                  <select class="form-control select2" name="status">
                                     <option>Paid</option>
                                     <option>Unpaid</option>
                                   </select>
@@ -184,7 +184,7 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                               <div class="col-sm-12">
                                 <div class="form-group">
                                   <label>Payment Status</label>
-                                  <select class="form-control" name="status">
+                                  <select class="form-control select2" name="status">
                                     <option selected><?php echo $row['accounting_status']?></option>
                                     <?php
                                     if ($row['accounting_status'] == "Paid") {

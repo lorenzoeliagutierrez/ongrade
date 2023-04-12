@@ -69,7 +69,7 @@ if (isset($_SESSION['role'])) {
                 <div class="col-8">
                 </div>
                 <!-- /.col -->
-                <div class="col-4">
+                <div class="col-md-4">
                   <button type="submit" class="btn btn-danger btn-block">Sign In</button>
                 </div>
                 <!-- /.col -->

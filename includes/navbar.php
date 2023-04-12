@@ -53,7 +53,17 @@
                 <div class="dropdown-divider"></div>
                 <div class="dropdown-item">
                     <div class="media">
-                    <img style="width: 50px; height: 50px;" src="data:image/jpeg;base64,<?php echo base64_encode($row['img']) ?>" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                        <?php
+                        if (!empty($row['img'])) {
+                        ?>
+                        <img style="width: 50px; height: 50px;" src="data:image/jpeg;base64,<?php echo base64_encode($row['img']) ?>" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                        <?php
+                        } else {
+                        ?>
+                        <img style="width: 50px; height: 50px;" src="../../docs/assets/img/user.png" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                        <?php
+                        }
+                        ?>
                     <div class="media-body">
                         <h3 class="dropdown-item-title">
                             <b>

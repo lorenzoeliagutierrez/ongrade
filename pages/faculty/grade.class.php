@@ -95,7 +95,7 @@ $section = $_GET['section'];
                 AND tbl_schoolyears.remark = 'Approved'");
 
                   while ($row = mysqli_fetch_array($load_info)) {
-                    $last_updated = new DateTime($row['last_updated']);
+                    $last_updated = new DateTime($row['last_update']);
                     ?>
                     <tr>
                       <input type="text" name="enrolled_subj_id[]" value="<?php echo $row['enrolled_subj_id']; ?>" hidden>

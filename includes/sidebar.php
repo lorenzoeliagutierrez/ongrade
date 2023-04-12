@@ -11,7 +11,17 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img style="width: 40px; height: 40px;" src="data:image/jpeg;base64,<?php echo base64_encode($row['img']) ?>" class="img-circle elevation-2 mt-2" alt="User Image">
+        <?php
+                        if (!empty($row['img'])) {
+                        ?>
+                        <img style="width: 40px; height: 40px;" src="data:image/jpeg;base64,<?php echo base64_encode($row['img']) ?>" class="img-circle elevation-2 mt-2" alt="User Image">
+                        <?php
+                        } else {
+                        ?>
+                        <img style="width: 40px; height: 40px;" src="../../docs/assets/img/user.png" class="img-circle elevation-2 mt-2" alt="User Image">
+                        <?php
+                        }
+                        ?>
         </div>
         <div class="info">
           <a class="d-block"><?php echo $_SESSION['name']; ?></a>
