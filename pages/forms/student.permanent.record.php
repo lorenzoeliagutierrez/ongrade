@@ -43,8 +43,7 @@ $pdf->AddPage();
 $pdf->SetFont('Arial', 'B', 15);
 $pdf->Cell(0, 5, 'SAINT FRANCIS OF ASSISI COLLEGE', 0, 1, 'C');
 $pdf->SetFont('Arial', '', 10);
-$test = utf8_decode("Piñas");
-$pdf->Cell(0, 5, '045 Admiral Village, Talon 3, Las ' . $test . ' City', 0, 1, 'C');
+$pdf->Cell(0, 5, '96 Bayanan, City of Bacoor, Cavite', 0, 1, 'C');
 $pdf->Cell(0, 5, '', 0, 1);
 $pdf->SetFont('Arial', 'B', 11);
 $pdf->Cell(0, 5, 'STUDENT\'S PERMANENT RECORD', 0, 1, 'C');
@@ -400,7 +399,7 @@ $pdf->SetFont('Arial', '', 9);
 $pdf->Cell(16, 5, 'Noted by:', 0, 0);
 $pdf->Cell(2, 5, '', 0, 0);
 $pdf->SetFont('Arial', 'B', 9);
-$pdf->Cell(0, 5, 'Aries C. Roldan, LPT, MAEd', 0, 1, 'C');
+$pdf->Cell(0, 5, 'Rebecca Dela Cruz-Vicente, LPT', 0, 1, 'C');
 
 $pdf->SetFont('Arial', '', 9);
 $pdf->Cell(20, 5, '', 0, 0);

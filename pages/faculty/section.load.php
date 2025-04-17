@@ -20,7 +20,7 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard | OnGrade - Bacoor</title>
+  <title>Section | OnGrade - Bacoor</title>
 
   <?php include '../../includes/links.php'; ?>
 
@@ -91,9 +91,18 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                   <td><?php echo $row['day']; ?></td>
                   <td><?php echo $row['room']; ?></td>
                   <td>
-                    <a href="class.php?class_id=<?php echo $row['class_id']; ?>&section=<?php echo $row['section']; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>" class="btn btn-primary btn-sm">View Class</a>
-                    <a href="../forms/rog.php?class_code=<?php echo $row['class_code']?>&section=<?php echo $row['section']; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>" class="btn btn-primary btn-sm">View ROG</a>
-                    <a href="../forms/class.list.php?class_code=<?php echo $row['class_code']?>&section=<?php echo $row['section']; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>" class="btn btn-primary btn-sm">View Class List</a>
+                    <?php
+                    if ($_SESSION['role'] == "Registrar" || $_SESSION['role'] == "Faculty Staff") {
+                    ?>
+                      <a href="class.php?class_id=<?php echo $row['class_id']; ?>&section=<?php echo $row['section']; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>" class="btn btn-primary btn-sm">View Class</a>
+                      <a href="../forms/rog.php?class_code=<?php echo $row['class_code']?>&class_id=<?php echo $row['class_id']; ?>&section=<?php echo $row['section']; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>" class="btn btn-primary btn-sm">View ROG</a>
+                      <a href="../forms/class.list.php?class_code=<?php echo $row['class_code']?>&class_id=<?php echo $row['class_id']; ?>&section=<?php echo $row['section']; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>" class="btn btn-primary btn-sm">View Class List</a>
+                    <?php
+                    } else {
+                    ?>
+                    <?php
+                    }
+                    ?>
                   </td>
                 </tr>
                 <?php

@@ -40,6 +40,16 @@
         $student_info = mysqli_query($conn, "SELECT *, CONCAT(lastname, ', ', firstname) AS fullname FROM tbl_students WHERE stud_id = '$_SESSION[id]'");
         $row = mysqli_fetch_array($student_info);
 
+    } elseif ($_SESSION['role'] == "Enrollment Staff") {
+        $admin_info = mysqli_query($conn, "SELECT *, CONCAT(admin_lastname, ', ', admin_firstname) AS fullname FROM tbl_enrollment_staff WHERE admin_id = '$_SESSION[id]'");
+        $row = mysqli_fetch_array($admin_info);
+
+    } elseif ($_SESSION['role'] == "Human Resource") {
+        $hr_info = mysqli_query($conn, "SELECT *, CONCAT(lastname, ', ', firstname) AS fullname FROM tbl_hr WHERE hr_id = '$_SESSION[id]'");
+        $row = mysqli_fetch_array($hr_info);
+
+    } else {
+        
     }
 
     ?>
@@ -53,7 +63,17 @@
                 <div class="dropdown-divider"></div>
                 <div class="dropdown-item">
                     <div class="media">
-                    <img style="width: 50px; height: 50px;" src="data:image/jpeg;base64,<?php echo base64_encode($row['img']) ?>" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                        <?php
+                        if (!empty($row['img'])) {
+                        ?>
+                        <img style="width: 50px; height: 50px;" src="data:image/jpeg;base64,<?php echo base64_encode($row['img']) ?>" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                        <?php
+                        } else {
+                        ?>
+                        <img style="width: 50px; height: 50px;" src="../../docs/assets/img/user.png" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                        <?php
+                        }
+                        ?>
                     <div class="media-body">
                         <h3 class="dropdown-item-title">
                             <b>

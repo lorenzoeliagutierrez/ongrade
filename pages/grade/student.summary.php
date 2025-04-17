@@ -9,7 +9,7 @@ require '../../includes/session.php';
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Student's Curriculum | OnGrade - Bacoor</title>
+    <title>Student's Summary Grade | OnGrade - Bacoor</title>
 
     <?php include '../../includes/links.php'; ?>
 
@@ -83,10 +83,9 @@ require '../../includes/session.php';
                                 </form>
                                 <?php
                                 if (isset($_POST['submit'])) {
-                                    $stud_info = mysqli_query($conn, "SELECT * FROM tbl_schoolyears WHERE stud_id = '$_POST[stud_id]' AND ay_id = '$_SESSION[active_acadyear]' AND sem_id = '$_SESSION[active_semester]'");
-                                    $row = mysqli_fetch_array($stud_info);
+                                    $stud_id = $_POST['stud_id'];
 
-                                    header("location: summary.grade.php?stud_id=".$row['stud_id']."&course=".$row['course_id']);
+                                    header("location: summary.grade.php?stud_id=".$stud_id);
                                 }
                                 ?>
                                 <!-- /.card-footer-->

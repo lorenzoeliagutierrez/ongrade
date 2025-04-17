@@ -11,7 +11,17 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img style="width: 40px; height: 40px;" src="data:image/jpeg;base64,<?php echo base64_encode($row['img']) ?>" class="img-circle elevation-2 mt-2" alt="User Image">
+        <?php
+                        if (!empty($row['img'])) {
+                        ?>
+                        <img style="width: 40px; height: 40px;" src="data:image/jpeg;base64,<?php echo base64_encode($row['img']) ?>" class="img-circle elevation-2 mt-2" alt="User Image">
+                        <?php
+                        } else {
+                        ?>
+                        <img style="width: 40px; height: 40px;" src="../../docs/assets/img/user.png" class="img-circle elevation-2 mt-2" alt="User Image">
+                        <?php
+                        }
+                        ?>
         </div>
         <div class="info">
           <a class="d-block"><?php echo $_SESSION['name']; ?></a>
@@ -59,7 +69,7 @@
             <a href="../student/list.students.php" class="nav-link">
               <i class="nav-icon fas fa-users"></i>
               <p>
-                Student List
+                Enrolled Students List
               </p>
             </a>
           </li>
@@ -107,7 +117,7 @@
             <a href="../student/list.students.php" class="nav-link">
               <i class="nav-icon fas fa-users"></i>
               <p>
-                Student List
+                Enrolled Students List
               </p>
             </a>
           </li>
@@ -185,6 +195,57 @@
                 </a>
               </li>
             </ul>
+          </li>
+          <?php
+            } elseif ($_SESSION['role'] == "Enrollment Staff") { /////////////////////// Registrar sidebar
+          ?>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-file"></i>
+              <p>
+                Students' Forms
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../grade/student.record.php" class="nav-link">
+                  <i class="far fa-file nav-icon"></i>
+                  <p>Student's Permanent Record</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../grade/student.curriculum.php" class="nav-link">
+                  <i class="far fa-file nav-icon"></i>
+                  <p>Student's Curriculum</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../grade/student.summary.php" class="nav-link">
+                  <i class="far fa-file nav-icon"></i>
+                  <p>Student's Summary of Grade</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <?php
+            } elseif ($_SESSION['role'] == "Human Resource") { /////////////////////// Registrar sidebar
+          ?>
+          <li class="nav-item">
+            <a href="../faculty/faculty.load.php" class="nav-link">
+              <i class="nav-icon fas fa-users-cog"></i>
+              <p>
+                Faculty Evaluations
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="../evaluation/evaluation.setting.php" class="nav-link">
+              <i class="nav-icon fas fa-cog"></i>
+              <p>
+                Settings
+              </p>
+            </a>
           </li>
           <?php
             }

@@ -3,7 +3,7 @@ require('./../fpdf/fpdf.php');
 include '../../includes/session.php';
 $class_code = $_GET['class_code'];
 $section = $_GET['section'];
-
+$class_id = $_GET['class_id'];
 
 class PDF extends FPDF
 {
@@ -14,6 +14,7 @@ class PDF extends FPDF
     {
         include '../../includes/conn.php';
         $class_code = $_GET['class_code'];
+        $class_id = $_GET['class_id'];
         $section = $_GET['section'];
         
         if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
@@ -60,7 +61,7 @@ class PDF extends FPDF
                 LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_enrolled_subjects.subj_id
                 LEFT JOIN tbl_schoolyears ON tbl_schoolyears.stud_id = tbl_enrolled_subjects.stud_id
                 LEFT JOIN tbl_schedules ON tbl_schedules.class_id = tbl_enrolled_subjects.class_id
-                WHERE tbl_schedules.class_code = '$class_code'
+                WHERE tbl_schedules.class_id = '$class_id'
                 AND tbl_schedules.section = '$section' 
                 AND tbl_schoolyears.ay_id = '$acadyear'
                 AND tbl_schoolyears.sem_id = '$semester'
@@ -450,18 +451,17 @@ class PDF extends FPDF
 
         $this->Cell(20, 5, 'Checked by:', 0, 0);
         $this->SetFont('Arial', 'B', '10');
-        $this->Cell(50, 5, 'Dr. Santos T. Castillo, Jr.', 'B', 0, 'C'); //=================ACADEMIC HEAD=================
+        $this->Cell(50, 5, '', 'B', 0, 'C'); //=================ACADEMIC HEAD=================
         $this->SetFont('Arial', '', '8');
         $this->Cell(5, 5, '', 0, 0);
         $this->Cell(30, 5, '', 'B', 0);
         $this->Cell(15, 5, '', 0, 0);
         $this->SetFont('Arial', 'B', '10');
-        $this->Cell(30, 5, 'Aries C. Roldan, ', 'B', 0, 'C');
-        $this->SetFont('Times', '', '9');
-        $this->Cell(20, 5, ' LPT, MAED', 'B', 1); //=========================REGISTRAR NAME====================
+        $this->Cell(30, 5, ' Rebecca Dela Cruz-Vicente, LPT', 'B', 0, 'C');
+        $this->Cell(20, 5, '', 'B', 1); //=========================REGISTRAR NAME====================
         $this->SetFont('Arial', '', '8');
         $this->Cell(20, 5, '', 0, 0);
-        $this->Cell(50, 5, 'Campus Director, College Dean', 0, 0, 'C');
+        $this->Cell(50, 5, 'Program Director', 0, 0, 'C');
         $this->Cell(5, 5, '', 0, 0);
         $this->Cell(30, 5, 'Date', 0, 0, 'C');
         $this->Cell(15, 5, '', 0, 0);
@@ -531,7 +531,7 @@ $que = mysqli_query($conn, "SELECT *, CONCAT(tbl_students.lastname, ', ', tbl_st
                 LEFT JOIN tbl_schedules ON tbl_schedules.class_id = tbl_enrolled_subjects.class_id
                 LEFT JOIN tbl_courses ON tbl_courses.course_id = tbl_schoolyears.course_id
                 LEFT JOIN tbl_year_levels ON tbl_year_levels.year_id = tbl_schoolyears.year_id
-                WHERE tbl_schedules.class_code = '$class_code'
+                WHERE tbl_schedules.class_id = '$class_id'
                 AND tbl_schedules.section = '$section' 
                 AND tbl_schoolyears.ay_id = '$acadyear'
                 AND tbl_schoolyears.sem_id = '$semester'
@@ -553,7 +553,7 @@ while ($row = mysqli_fetch_array($que)) {
         while ($pdf->GetStringWidth($fullname) > $cellwidth) {
             $pdf->SetFontSize($tempFontSize -= 0.1);
         }
-        $pdf->Cell(53.2, 5, $fullname, 1, 0);
+        $pdf->Cell(53.2, 5, utf8_decode($fullname), 1, 0);
         $pdf->SetFont('Arial', '', '9');
         $fontsize1 = 10;
         $tempFontSize2 = $fontsize1;
@@ -572,11 +572,22 @@ while ($row = mysqli_fetch_array($que)) {
         if ($row['remarks'] == 'Failed' || $row['remarks'] == 'INC') {
             $pdf->SetTextColor(255, 0, 0);
             $pdf->Cell(14.9, 5, $row['numgrade'], 1, 0, 'C');
-            $pdf->Cell(44.6, 5, $row['remarks'], 1, 1, 'C');
+            
+            if (empty($row['finalterm']) || empty($row['midterm']) || empty($row['prelim'])) {
+                $pdf->Cell(44.6, 5, 'INC-A', 1, 1, 'C');
+            } else {
+                $pdf->Cell(44.6, 5, $row['remarks'], 1, 1, 'C');
+            }
             $pdf->SetTextColor(0, 0, 0);
         } else {
             $pdf->Cell(14.9, 5, $row['numgrade'], 1, 0, 'C');
-            $pdf->Cell(44.6, 5, $row['remarks'], 1, 1, 'C');
+            if ($row['tuition_status'] == 'Unpaid') {
+                $pdf->SetTextColor(255, 0, 0);
+                $pdf->Cell(44.6, 5, 'INC-T', 1, 1, 'C');
+                $pdf->SetTextColor(0, 0, 0);
+            } else {
+                $pdf->Cell(44.6, 5, $row['remarks'], 1, 1, 'C');
+            }
         }
 
 
@@ -596,6 +607,7 @@ while ($row = mysqli_fetch_array($que)) {
     
 }
 $pdf->SetFont('Arial', 'B', '12');
+$pdf->Cell(200, 5, '*********sfac****************************Nothing Follows ' . ($x - 1) . ' Students****************************sfac**********', 0, 1, 'C');
 
 
 

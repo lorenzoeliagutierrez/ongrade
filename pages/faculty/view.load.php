@@ -24,7 +24,7 @@ if (isset($_POST['semester']) && isset($_POST['acadyear'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard | OnGrade - Bacoor</title>
+  <title>Subject Load | OnGrade - Bacoor</title>
 
   <?php include '../../includes/links.php'; ?>
 

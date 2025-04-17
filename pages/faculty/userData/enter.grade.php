@@ -1,7 +1,18 @@
 <?php
 include '../../../includes/session.php';
+
+date_default_timezone_set('Asia/Manila');
+
 $class_id = $_GET['class_id'];
 $section = $_GET['section'];
+
+if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
+  $acadyear = $_GET['acadyear'];
+  $semester = $_GET['semester'];
+} else {
+  $acadyear = $_SESSION['active_acadyear'];
+  $semester = $_SESSION['active_semester'];
+}
 
 if (isset($_POST['submit'])) {
 
@@ -12,6 +23,7 @@ if (isset($_POST['submit'])) {
     $finalterm = mysqli_real_escape_string($conn, $_POST['finalterm']);
     $absences = mysqli_real_escape_string($conn, $_POST['absences']);
     $updated_by = $_SESSION['name'] . ' - ' . $_SESSION['role'];
+    $date = date('Y-m-d h:i:s');
 
 
 
@@ -20,7 +32,7 @@ if (isset($_POST['submit'])) {
         if (!empty($_POST['midterm']) && !empty($_POST['finalterm'])) {
             $ofgrade = number_format((float) (($midterm * 0.4) + ($finalterm * 0.6)), 2, '.', '');
 
-            if ($ofgrade <= 74) {
+            if ($ofgrade <= 74.49) {
                 $numgrade = "5.00";
                 $remarks = "Failed";
         
@@ -74,9 +86,9 @@ if (isset($_POST['submit'])) {
 
         
         if (!empty($_POST['prelim']) && !empty($_POST['midterm']) && !empty($_POST['finalterm'])) {
-            $ofgrade = number_format((float) ($prelim + $midterm + $finalterm) / 3, 2, '.', '');
+            $ofgrade = number_format((float) (($prelim * 0.3) + ($midterm * 0.3) + ($finalterm * 0.4)), 2, '.', '');
 
-            if ($ofgrade <= 74) {
+            if ($ofgrade <= 74.49) {
                 $numgrade = "5.00";
                 $remarks = "Failed";
         
@@ -127,8 +139,20 @@ if (isset($_POST['submit'])) {
         }
 
     }
-
-    $add_grade = mysqli_query($conn, "UPDATE tbl_enrolled_subjects
+    
+    if ($remarks == 'INC') {
+        $inc_status = "Yes";
+        
+    } else {
+        $inc_status = "No";
+        
+    }
+    
+    $select_es = mysqli_query($conn, "SELECT inc_status FROM tbl_enrolled_subjects WHERE enrolled_subj_id = '$enrolled_subj_id'");
+    $row = mysqli_fetch_array($select_es);
+    
+    if ($row['inc_status'] == 'Yes') {
+        $add_grade = mysqli_query($conn, "UPDATE tbl_enrolled_subjects
         SET prelim = '$prelim',
         midterm = '$midterm',
         finalterm = '$finalterm',
@@ -137,10 +161,27 @@ if (isset($_POST['submit'])) {
         absences = '$absences',
         remarks = '$remarks',
         updated = '$updated_by',
-        last_update = CURRENT_TIMESTAMP
+        last_update = '$date'
         WHERE enrolled_subj_id = '$enrolled_subj_id'");
+        
+    } else {
+        $add_grade = mysqli_query($conn, "UPDATE tbl_enrolled_subjects
+        SET prelim = '$prelim',
+        midterm = '$midterm',
+        finalterm = '$finalterm',
+        ofgrade = '$ofgrade',
+        numgrade = '$numgrade',
+        absences = '$absences',
+        remarks = '$remarks',
+        updated = '$updated_by',
+        last_update = '$date',
+        inc_status = '$inc_status'
+        WHERE enrolled_subj_id = '$enrolled_subj_id'");
+        
+    }
+
 
     $_SESSION['update_success'] = true;
-    header("location: ../class.php?class_id=" . $class_id . "&section=" . $section);
+    header("location: ../class.php?class_id=" . $class_id . "&section=" . $section . "&acadyear=" . $acadyear . "&semester=" . $semester);
 
 }

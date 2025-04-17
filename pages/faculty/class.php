@@ -11,6 +11,7 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
   $acadyear = $_SESSION['active_acadyear'];
   $semester = $_SESSION['active_semester'];
 }
+date_default_timezone_set('Asia/Manila');
 ?>
 
 <!DOCTYPE html>
@@ -19,7 +20,7 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard | OnGrade - Bacoor</title>
+  <title>Class | OnGrade - Bacoor</title>
 
   <?php include '../../includes/links.php'; ?>
   
@@ -64,8 +65,10 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
               </b> List of Students <b>(<?php echo $semester .' - '. $acadyear?>)</b></h3>
 
             <div class="card-tools">
-              <a href="grade.class.php?class_id=<?php echo $class_id; ?>&section=<?php echo $section; ?>"
+                <a href="grade.class.php?class_id=<?php echo $class_id; ?>&section=<?php echo $section; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>"
                 class="btn btn-primary btn-sm">Enter Section Grade</a>
+                <a href="transfer.class.php?class_id=<?php echo $class_id; ?>&section=<?php echo $section; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>"
+                class="btn btn-primary btn-sm my-1">Transfer Students</a>
             </div>
           </div>
           <div class="card-body">
@@ -83,6 +86,7 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                   <th>Numerical Grade</th>
                   <th>Remarks</th>
                   <th>Absences</th>
+                  <th>INC Status</th>
                   <th>Update At</th>
                   <th>Updated By</th>
                   <th>Option</th>
@@ -90,7 +94,7 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
               </thead>
               <tbody>
                 <?php
-                $load_info = mysqli_query($conn, "SELECT *, CONCAT(tbl_students.lastname, ', ', tbl_students.firstname, ' ', tbl_students.middlename)  as fullname
+                $load_info = mysqli_query($conn, "SELECT *, CONCAT(tbl_students.lastname, ', ', tbl_students.firstname, ' ', tbl_students.middlename)  as fullname, tbl_enrolled_subjects.last_update
                 FROM tbl_enrolled_subjects 
                 LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_enrolled_subjects.subj_id
                 LEFT JOIN tbl_students ON tbl_students.stud_id = tbl_enrolled_subjects.stud_id
@@ -101,10 +105,11 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                 AND tbl_schedules.section = '$section' 
                 AND tbl_schoolyears.ay_id = '$acadyear'
                 AND tbl_schoolyears.sem_id = '$semester'
-                AND tbl_schoolyears.remark = 'Approved'");
+                AND tbl_schoolyears.remark = 'Approved'
+                ORDER BY lastname ASC");
 
                 while ($row = mysqli_fetch_array($load_info)) {
-                  $last_updated = new DateTime($row['last_updated']);
+                    $last_updated = new DateTime($row['last_update']);
                   ?>
                   <tr>
                     <td>
@@ -168,6 +173,9 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                       <?php echo $row['absences']; ?>
                     </td>
                     <td>
+                      <?php echo $row['inc_status']; ?>
+                    </td>
+                    <td>
                       <?php echo $last_updated->format('h:i a \o\n M d, Y') ?>
                     </td>
                     <td>
@@ -176,6 +184,8 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                     <td>
                       <button class="btn btn-primary btn-sm" data-toggle="modal"
                         data-target="#modal-lg<?php echo $row['enrolled_subj_id']; ?>">Enter Grade</button>
+                        <button class="btn btn-primary btn-sm my-1" data-toggle="modal"
+                        data-target="#modal-lg-transfer<?php echo $row['enrolled_subj_id']; ?>">Transfer Section</button>
                     </td>
                   </tr>
                   <!-- Modal for grade input -->
@@ -190,7 +200,7 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                             <span aria-hidden="true">&times;</span>
                           </button>
                         </div>
-                        <form action="userData/enter.grade.php?class_id=<?php echo $class_id ?>&section=<?php echo $section ?>"
+                        <form action="userData/enter.grade.php?class_id=<?php echo $class_id ?>&section=<?php echo $section ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>"
                           method="POST">
                           <div class="modal-body">
                             <input name="enrolled_subj_id" value="<?php echo $row['enrolled_subj_id']; ?>" hidden>
@@ -261,6 +271,58 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                                   <label>Absences</label>
                                   <input type="text" class="form-control" placeholder="Enter ..." name="absences"
                                     id="absences" value="<?php echo $row['absences'] ?>">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Modal for grade input -->
+                  <div class="modal fade" id="modal-lg-transfer<?php echo $row['enrolled_subj_id']; ?>">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Transfer <b>
+                              <?php echo strtoupper($row['fullname']); ?>
+                            </b> to other section</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <form action="userData/update.section.php?enrolled_subj_id=<?php echo $row['enrolled_subj_id']; ?>&class_id=<?php echo $class_id ?>&section=<?php echo $section ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>"
+                          method="POST">
+                          <div class="modal-body">
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label>Current Section</label>
+                                  <input type="text" class="form-control" placeholder="Enter ..."
+                                    name="midterm" id="midterm" value="<?php echo $section?>" disabled>
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label>Transfer to</label>
+                                  <select class="form-control select2" name="new_class_id">
+                                    <option selected disabled>Select section</option>
+                                    <?php
+                                    $sechedules_info = mysqli_query($conn, "SELECT * FROM tbl_schedules
+                                    LEFT JOIN tbl_subjects_new ON tbl_schedules.subj_id = tbl_subjects_new.subj_id
+                                    LEFT JOIN tbl_faculties_staff ON tbl_schedules.faculty_id = tbl_faculties_staff.faculty_id
+                                    WHERE class_code = '$row[class_code]' AND acad_year = '$acadyear' AND semester = '$semester' AND section NOT IN ('$section')");
+                                    while ($row1 = mysqli_fetch_array($sechedules_info)) {
+                                    ?>
+                                    <option value="<?php echo $row1['class_id']?>"><?php echo $row1['class_code'] .' - '. $row1['section'] .' ('. $row1['faculty_lastname'] .')'?></option></option>
+                                    <?php
+                                    }
+                                    ?>
+                                  </select>
                                 </div>
                               </div>
                             </div>

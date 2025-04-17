@@ -5,7 +5,7 @@ session_start();
 
 
 if (isset($_SESSION['role'])) {
-    header("location: pages/dashboard/index.php");
+    header("location: ../dashboard/index.php");
 } 
 
 
@@ -16,7 +16,7 @@ if (isset($_SESSION['role'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Log in (v2)</title>
+  <title>Log In | OnGrade - Bacoor</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -34,7 +34,7 @@ if (isset($_SESSION['role'])) {
   <!-- /.login-logo -->
   <div class="card card-outline card-danger">
     <div class="card-header text-center">
-      <a href="../../index2.html">
+      <a href="#">
             <!-- <img height="90" width="90" src="../../docs/assets/img/logo.png" alt="logo-signin"> -->
             <h3><b>Saint Francis of Assisi College - Bacoor</b></h3>
             <h5>Online Grade System</h5>
@@ -44,7 +44,9 @@ if (isset($_SESSION['role'])) {
       <div class="container">
         <div class="row">
           <div class="col-auto">
-            <img class="d-block mx-auto mt-3" src="../../docs/assets/img/logo.png" alt="logo-signin">
+             <a href="https://www.stfrancisbacoor.com/">
+                 <img class="d-block mx-auto mt-3" src="../../docs/assets/img/logo.png" alt="logo-signin">
+             </a>
           </div>
           <div class="col">
           <p class="login-box-msg">Sign in to your account.</p>
@@ -69,13 +71,13 @@ if (isset($_SESSION['role'])) {
                 <div class="col-8">
                 </div>
                 <!-- /.col -->
-                <div class="col-4">
-                  <button type="submit" class="btn btn-danger btn-block">Sign In</button>
+                <div class="col-md-4">
+                  <button type="submit" name="submit" class="btn btn-danger btn-block">Sign In</button>
                 </div>
                 <!-- /.col -->
               </div>
               <p class="mb-1">
-                <a href="forgot-password.html">I forgot my password</a>
+                <a href="forgot.password.php">I forgot my password</a>
               </p>
             </form>
           </div>

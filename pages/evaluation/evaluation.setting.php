@@ -9,7 +9,7 @@ require '../../includes/session.php';
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Student's Curriculum | OnGrade - Bacoor</title>
+    <title>Student's Summary Grade | OnGrade - Bacoor</title>
 
     <?php include '../../includes/links.php'; ?>
 
@@ -29,7 +29,7 @@ require '../../includes/session.php';
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0">Student's Curriculum</h1>
+                            <h1 class="m-0">Set Evalutation Period</h1>
                         </div><!-- /.col -->
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
@@ -48,56 +48,43 @@ require '../../includes/session.php';
                     <div class="row justify-content-center">
                         <div class="col-md-6">
                             <div class="card">
-                                <form method="POST">
+                                <form method="POST" action="userData/ctrl.update.settings.php">
                                     <div class="card-header">
-                                        <h3 class="card-title">Select Student</h3>
+                                        <h3 class="card-title">Select Dates</h3>
                                         <div class="card-tools">
                                         </div>
                                     </div>
                                     <div class="card-body">
+                                        <?php
+                                        $select_dates = mysqli_query($conn, 'SELECT * FROM tbl_eval_settings');
+                                        while ($row = mysqli_fetch_array($select_dates)) { 
+                                        ?>
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <div class="form-group">
-                                                    <label>Student</label>
-                                                    <select class="form-control select2" name="stud_id"
-                                                        style="width: 100%;" required>
-                                                        <option selected disabled>Select Student</option>
-                                                        <?php
-                                                        $stud_info = mysqli_query($conn, "SELECT stud_id, CONCAT(lastname, ', ', firstname, ' ', middlename) as fullname FROM tbl_students ORDER BY lastname ASC");
-                                                        while ($row = mysqli_fetch_array($stud_info)) {
-                                                            ?>
-                                                            <option value="<?php echo $row['stud_id'] ?>"><?php echo $row['fullname'] ?>
-                                                            </option>
-                                                        <?php } ?>
-                                                    </select>
+                                                    <label>From</label>
+                                                    <input type="date" value="<?php echo $row['day_start']?>" name="datefrom" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label>To</label>
+                                                    <input type="date" value="<?php echo $row['day_end']?>" name="dateto" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php
+                                        }
+                                        ?>
                                     </div>
                                     <!-- /.card-body -->
                                     <div class="card-footer">
-                                        <button type="submit" class="btn btn-primary btn-sm float-right ml-2"
-                                            name="submit">Search
-                                            Curriculum</button>
                                         <button type="submit" class="btn btn-primary btn-sm float-right"
-                                            name="submit" value="empty">Search
-                                            Empty Curriculum</button>
+                                            name="submit">Set Period</button>
                                     </div>
                                 </form>
-                                <?php
-                                if (isset($_POST['submit'])) {
-                                    $stud_id = $_POST['stud_id'];
-
-                                    if ($_POST['submit'] != "empty") {
-                                        header("location: ../forms/student.data.curriculum.php?stud_id=".$stud_id);
-
-                                    } else {
-                                        header("location: ../forms/student.empty.curriculum.php?stud_id=".$stud_id);
-
-                                    }
-                                }
-                                ?>
-                                <!-- /.card-footer-->
                             </div>
                             <!-- /.card -->
                         </div>

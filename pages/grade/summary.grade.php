@@ -1,10 +1,12 @@
 <?php
 require '../../includes/session.php';
 
-if (isset($_GET['stud_id'])) {
+if (($_SESSION['role'] == 'Registrar' || $_SESSION['role'] == 'Enrollment Staff') && isset($_GET['stud_id'])) {
+    
     $stud_id = $_GET['stud_id'];
+    
 } else {
-  $stud_id = $_SESSION['id'];
+        $stud_id = $_SESSION['id'];
 }
 ?>
 
@@ -14,7 +16,7 @@ if (isset($_GET['stud_id'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard | OnGrade - Bacoor</title>
+  <title>Student's Summary Grade | OnGrade - Bacoor</title>
 
   <?php include '../../includes/links.php'; ?>
 
@@ -77,17 +79,18 @@ if (isset($_GET['stud_id'])) {
               </thead>
               <tbody>
                 <?php
-                $sy_info = mysqli_query($conn, "SELECT * FROM tbl_schoolyears
+                $sy_info = mysqli_query($conn, "SELECT *, tbl_schoolyears.ay_id FROM tbl_schoolyears
                 LEFT JOIN tbl_courses ON tbl_courses.course_id = tbl_schoolyears.course_id
                 LEFT JOIN tbl_semesters ON tbl_schoolyears.sem_id = tbl_semesters.semester
+                LEFT JOIN tbl_acadyears ON tbl_schoolyears.ay_id = tbl_acadyears.academic_year
                 LEFT JOIN tbl_year_levels ON tbl_schoolyears.year_id = tbl_year_levels.year_id 
-                WHERE stud_id = '$stud_id'
+                WHERE stud_id = '$stud_id' AND remark = 'Approved'
                 ORDER BY tbl_year_levels.year_id ASC, tbl_semesters.sem_id ASC");
                 while ($row = mysqli_fetch_array($sy_info)) {
 
                 ?>
                 <tr>
-                  <td><b><?php echo $row['year_level'].' - '. $row['semester']?></b></td>
+                  <td><b><?php echo $row['year_level'].'<br>'. $row['semester'].' - '. $row['academic_year']?></b></td>
                   <td><b><?php echo $row['course']?></b></td>
                   <td></td>
                   <td></td>
@@ -111,15 +114,12 @@ if (isset($_GET['stud_id'])) {
                 
                 <tr>
                   <td><?php echo $row2['subj_code']?></td>
-                  <td><?php echo $row2['subj_desc']?><br><?php echo $row3['faculty_name']?></td>
+                  <td><?php echo $row2['subj_desc']?><br>Instructor: <?php echo $row3['faculty_name']?></td>
+                  
                   <?php
-                  if ($_SESSION['role'] == "Student" && $row['accounting_status'] == "Unpaid") {
+                  if ($_SESSION['role'] == "Student" && $row['accounting_status'] == "Disabled") {
                   ?>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                  <td class="justify-content-center" colspan="5">Your grades are currently unavaible due to pending accounts.<br> Please refer to the <b>Registrar's Office</b> for clarification.</td>
                   <?php
                   } else {
                   ?>

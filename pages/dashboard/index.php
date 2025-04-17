@@ -40,7 +40,7 @@ require '../../includes/session.php';
         </div><!-- /.container-fluid -->
       </div>
       <!-- /.content-header -->
-
+       
       <!-- Main content -->
       <section class="content">
         <div class="container-fluid">
@@ -136,7 +136,7 @@ require '../../includes/session.php';
               </div>
           </div>
           <?php
-          if ($_SESSION['role'] == "Student") {
+          if ($_SESSION['role'] == "Student1") {
           ?>
           <div class="row">
           <div class="col-md-4">
@@ -146,15 +146,37 @@ require '../../includes/session.php';
                     <div class="card card-widget widget-user">
                       <!-- Add the bg color to the header using any of the bg-* classes -->
                       <div class="widget-user-header bg-info">
+                        <?php
+                        $student_info = mysqli_query($conn, "SELECT *, CONCAT(lastname, ', ', firstname, ' ', middlename) AS fullname FROM tbl_students
+                        LEFT JOIN tbl_schoolyears ON tbl_schoolyears.stud_id = tbl_students.stud_id
+                        LEFT JOIN tbl_courses ON tbl_courses.course_id = tbl_schoolyears.course_id
+                        LEFT JOIN tbl_year_levels ON tbl_year_levels.year_id = tbl_schoolyears.year_id
+                        WHERE sem_id = '$_SESSION[active_semester]'
+                        AND ay_id = '$_SESSION[active_acadyear]'
+                        AND tbl_students.stud_id = '$_SESSION[id]'");
+
+                        $row = mysqli_fetch_array($student_info);
+
+                        ?>
                         <h3 class="widget-user-username">
-                          <?php echo $_SESSION['name'] ?>
+                          <?php echo $row['fullname'] ?>
                         </h3>
                         <h5 class="widget-user-desc">
-                          <?php echo $_SESSION['role'] ?>
+                          <?php echo $row['course_abv'] .' - '. $row['year_abv']?>
                         </h5>
                       </div>
                       <div class="widget-user-image">
-                        <img class="img-circle elevation-2" src="../../dist/img/user1-128x128.jpg" alt="User Avatar">
+                        <?php
+                        if (!empty($row['img'])) {
+                        ?>
+                        <img class="img-circle elevation-2" style="width: 95px; height: 95px;" src="data:image/jpeg;base64,<?php echo base64_encode($row['img']) ?>" alt="User Avatar">
+                        <?php
+                        } else {
+                        ?>
+                        <img class="img-circle elevation-2" style="width: 95px; height: 95px;" src="../../docs/assets/img/user.png" alt="User Avatar">
+                        <?php
+                        }
+                        ?>
                       </div>
                       <div class="card-footer">
                         <div class="row">
@@ -176,15 +198,18 @@ require '../../includes/session.php';
                             <div class="description-block">
                               <?php
                               $sum = 0;
+                              $sum1 = 0;
                               $i = 0;
                               while ($row = mysqli_fetch_array($enrolled_subj)) {
                                 $sum = $row['ofgrade'] + $sum;
+                                $sum1 = $row['numgrade'] + $sum1;
                                 $i++;
                               }
                               $gwa = number_format($sum / $i, 2, '.', '');
+                              $gwa1 = number_format($sum1 / $i, 2, '.', '');
                               ?>
                               <h5 class="description-header">
-                                <?php echo $gwa; ?>
+                                <?php echo $gwa1; ?>
                               </h5>
                               <span class="description-text">GWA</span>
                             </div>
@@ -203,6 +228,8 @@ require '../../includes/session.php';
                                 $color = "success";
 
                               }
+
+                              
                               ?>
                               <h5 class="description-header text-<?php echo $color ?>"><b>
                                   <?php echo $remark ?>

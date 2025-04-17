@@ -37,7 +37,7 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">Student List</h1>
+              <h1 class="m-0">Student List <b><?php echo $semester .' - '. $acadyear?></b></h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -56,31 +56,92 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
         <!-- Default box -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">Student List</h3>
+            <h3 class="card-title">Student List for <b><?php echo $semester .' - '. $acadyear?></b></h3>
             <div class="card-tools">
-                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-md">Set Payment Status</button>
+                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-md1">Set Sem and AY</button>
+                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-md2">Set Tuition Status</button>
             </div>
-            <div class="modal fade" id="modal-md">
+            
+                  
+                  <div class="modal fade" id="modal-md2">
                     <div class="modal-dialog modal-md">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h4 class="modal-title">Select Payment Status for <b>
+                          <h4 class="modal-title">Select Tuition Status for <b>
                               all students
                             </b></h4>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
                         </div>
-                        <form action="userData/ctrl.edit.student.php"
+                        <form action="userData/ctrl.edit.student.php?acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>"
                           method="POST">
                           <div class="modal-body">
                             <div class="row justify-content-center">
                               <div class="col-sm-12">
                                 <div class="form-group">
-                                  <label>Payment Status</label>
-                                  <select class="form-control" name="status">
+                                  <label>Tuition Status</label>
+                                  <select class="form-control select2" name="status">
                                     <option>Paid</option>
                                     <option>Unpaid</option>
+                                  </select>
+                                    <p><i>* note that changing this to unpaid will mark all of the students with <b>INC-T</b> in class R.O.G.</i><br><i>** this will also disable viewing of grades</i></p>
+                                 
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" name="submit_all2" class="btn btn-primary">Save changes</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="modal fade" id="modal-md1">
+                    <div class="modal-dialog modal-md">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Select <b>
+                              Semester and Academic Year
+                            </b></h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <form 
+                          method="GET">
+                          <div class="modal-body">
+                            <div class="row justify-content-center">
+                              <div class="col-sm-12">
+                                <div class="form-group">
+                                  <label>Semester</label>
+                                  <select class="form-control select2" name="semester">
+                                    <?php
+                                    $select_sem = mysqli_query($conn, 'SELECT * FROM tbl_semesters');
+                                    while ($row = mysqli_fetch_array($select_sem)) {
+                                        ?>
+                                        <option value='<?php echo $row['semester']?>'><?php echo $row['semester']?></option>
+                                        <?php
+                                    }
+                                    ?>
+                                  </select>
+                                </div>
+                              </div>
+                              <div class="col-sm-12">
+                                <div class="form-group">
+                                  <label>Academic Year</label>
+                                  <select class="form-control select2" name="acadyear">
+                                    <?php
+                                    $select_sem = mysqli_query($conn, 'SELECT * FROM tbl_acadyears');
+                                    while ($row = mysqli_fetch_array($select_sem)) {
+                                        ?>
+                                        <option value='<?php echo $row['academic_year']?>'><?php echo $row['academic_year']?></option>
+                                        <?php
+                                    }
+                                    ?>
                                   </select>
                                 </div>
                               </div>
@@ -113,10 +174,13 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
             <table id="example2" class="table table-bordered table-hover">
               <thead>
                 <tr>
+                  <th>Student Number</th>
                   <th>Student</th>
                   <th>Course</th>
                   <th>Year Level</th>
-                  <th>Payment Status</th>
+                  <th>View Grade</th>
+                  <th>Tuition Status</th>
+                  <th>Updated By</th>
                   <th>Option</th>
                 </tr>
               </thead>
@@ -147,12 +211,15 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                     while ($row = mysqli_fetch_array($student_info))  {
                 ?>
                 <tr>
+                  <td><?php echo $row['stud_no']?></td>
                   <td><?php echo $row['fullname']?></td>
                   <td><?php echo $row['course_abv']?></td>
                   <td><?php echo $row['year_level']?></td>
                   <td><?php echo $row['accounting_status']?></td>
+                  <td><?php echo $row['tuition_status']?></td>
+                  <td><?php echo $row['updatedby']?> at <br> <?php echo $row['updatedat']?></td>
                   <td>
-                    <button class="btn btn-primary btn-sm m-1" data-toggle="modal" data-target="#modal-md<?php echo $row['stud_id']; ?>">Change payment status</button>
+                    <button class="btn btn-primary btn-sm m-1" data-toggle="modal" data-target="#modal-md2<?php echo $row['stud_id']; ?>">Set Tuition Status</button>
                     <button type="button" class="btn btn-primary btn-sm m-1" data-toggle="dropdown">
                       Forms
                     </button>
@@ -165,29 +232,29 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                     </ul>
                   </td>
                 </tr>
-                <!-- Modal for grade input -->
-                <div class="modal fade" id="modal-md<?php echo $row['stud_id']; ?>">
+                  <!-- Modal for grade input -->
+                <div class="modal fade" id="modal-md2<?php echo $row['stud_id']; ?>">
                     <div class="modal-dialog modal-md">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h4 class="modal-title">Select Payment Status for <b>
+                          <h4 class="modal-title">Select Tuition Status for <b>
                               <?php echo strtoupper($row['fullname']); ?>
                             </b></h4>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
                         </div>
-                        <form action="userData/ctrl.edit.student.php?stud_id=<?php echo $row['stud_id']?>"
+                        <form action="userData/ctrl.edit.student.php?stud_id=<?php echo $row['stud_id']?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>"
                           method="POST">
                           <div class="modal-body">
                             <div class="row justify-content-center">
                               <div class="col-sm-12">
                                 <div class="form-group">
-                                  <label>Payment Status</label>
-                                  <select class="form-control" name="status">
-                                    <option selected><?php echo $row['accounting_status']?></option>
+                                  <label>Tuition Status</label>
+                                  <select class="form-control select2" name="tuition_status">
+                                    <option selected><?php echo $row['tuition_status']?></option>
                                     <?php
-                                    if ($row['accounting_status'] == "Paid") {
+                                    if ($row['tuition_status'] == "Paid") {
                                     ?>
                                     <option>Unpaid</option>
                                     <?php
@@ -198,13 +265,15 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                                     }
                                     ?>
                                   </select>
+                                  <p><i>* note that changing this to unpaid will mark all of the students with <b>INC-T</b> in class R.O.G.</i><br><i>** this will also disable viewing of grades</i></p>
+                                 
                                 </div>
                               </div>
                             </div>
                           </div>
                           <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
+                            <button type="submit" name="submit2" class="btn btn-primary">Save changes</button>
                           </div>
                         </form>
                       </div>

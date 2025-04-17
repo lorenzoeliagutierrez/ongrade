@@ -19,12 +19,25 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Class | OnGrade - Bacoor</title>
+  <title>Dashboard | OnGrade - Bacoor</title>
 
   <?php include '../../includes/links.php'; ?>
-  
+
 
 </head>
+<script>
+  function selectAll() {
+    if (document.getElementById('exampleCheck1').checked) {
+      $('input.select-all').each(function () {
+        this.checked = true;
+      });
+    } else {
+      $('input.select-all').each(function () {
+        this.checked = false;
+      });
+    }
+  }
+</script>
 
 <body class="hold-transition layout-fixed layout-navbar-fixed layout-footer-fixed">
   <div class="wrapper">
@@ -58,32 +71,79 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
 
         <!-- Default box -->
         <div class="card">
-          <form action="userData/enter.grade.class.php?class_id=<?php echo $class_id; ?>&section=<?php echo $section; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>" method="POST">
+          <form action="userData/update.section.class.php?class_id=<?php echo $class_id; ?>&section=<?php echo $section; ?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>"
+            method="POST">
             <div class="card-header">
               <h3 class="card-title"><b>
                   <?php echo $section ?>'s
                 </b> List of Students</h3>
 
               <div class="card-tools">
-                <button type="submit" class="btn btn-success btn-sm" name="submit">Save Changes</button>
+              <button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#modal-lg-class-history">Transfer selected students</button>
+                <div class="modal fade" id="modal-lg-class-history">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Transfer <b><?php echo $section; ?></b> students</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label>Current Section</label>
+                                  <input type="text" class="form-control" placeholder="Enter ..."
+                                    name="midterm" id="midterm" value="<?php echo $section?>" disabled>
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label>Transfer to</label>
+                                  <select class="form-control select2" name="new_class_id">
+                                    <option selected disabled>Select section</option>
+                                    <?php
+                                    $current_sched = mysqli_query($conn, "SELECT * FROM tbl_schedules WHERE class_id = '$class_id' AND section = '$section'");
+                                    $row = mysqli_fetch_array($current_sched);
+                                    $sechedules_info = mysqli_query($conn, "SELECT * FROM tbl_schedules
+                                    LEFT JOIN tbl_subjects_new ON tbl_schedules.subj_id = tbl_subjects_new.subj_id
+                                    LEFT JOIN tbl_faculties_staff ON tbl_schedules.faculty_id = tbl_faculties_staff.faculty_id
+                                    WHERE class_code = '$row[class_code]' AND acad_year = '$acadyear' AND semester = '$semester' AND section NOT IN ('$section')");
+                                    while ($row1 = mysqli_fetch_array($sechedules_info)) {
+                                    ?>
+                                    <option value="<?php echo $row1['class_id']?>"><?php echo $row1['class_code'] .' - '. $row1['section'] .' ('. $row1['faculty_lastname'] .')'?></option></option>
+                                    <?php
+                                    }
+                                    ?>
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
               </div>
             </div>
             <div class="card-body">
               <table id="example4" class="table table-bordered table-hover">
                 <thead>
                   <tr>
+                    <th>
+                      <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1" onclick="selectAll()">
+                        <label class="form-check-label" for="exampleCheck1"></label>
+                      </div>
+                    </th>
                     <th>Image</th>
                     <th>Student ID</th>
                     <th>Student Name</th>
                     <th>Course</th>
-                    <th>Prelims</th>
-                    <th>Midterms</th>
-                    <th>Finalterms</th>
-                    <th>Final Grade</th>
-                    <th>Numerical Grade</th>
-                    <th>Remarks</th>
-                    <th>Absences</th>
-                    <th>INC Status</th>
                     <th>Update At</th>
                     <th>Updated By</th>
                   </tr>
@@ -108,8 +168,11 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                     $last_updated = new DateTime($row['last_update']);
                     ?>
                     <tr>
-                      <input type="text" name="enrolled_subj_id[]" value="<?php echo $row['enrolled_subj_id']; ?>" hidden>
-                      <input type="text" name="special_tut[]" value="<?php echo $row['special_tut']; ?>" hidden>
+                      <td>
+                        <div class="form-check">
+                          <input type="checkbox" class="form-check-input select-all" id="exampleCheck1" value="<?php echo $row['enrolled_subj_id']?>" name="enrolled_subj_id[]">
+                        </div>
+                      </td>
                       <td>
                         <?php
                         if (empty($row['img'])) {
@@ -130,64 +193,6 @@ if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
                       </td>
                       <td>
                         <?php echo $row['course_abv']; ?>
-                      </td>
-                      <td>
-                        <?php
-                        if ($_SESSION['active_semester'] == "Summer" || $row['special_tut'] == 1) {
-                          ?>
-                          <input type="text" class="form-control" placeholder="Enter ..." onkeyup="ofGrade()" name="prelim[]"
-                            id="prelim" value="<?php echo $row['prelim'] ?>" disabled>
-                          <?php
-                        } else {
-                          ?>
-                          <input type="text" class="form-control" placeholder="Enter ..." onkeyup="ofGrade()" name="prelim[]"
-                            id="prelim" value="<?php echo $row['prelim'] ?>">
-                          <?php
-                        }
-                        ?>
-                      </td>
-                      <td>
-                        <input type="text" class="form-control" placeholder="Enter ..." onkeyup="ofGrade()" name="midterm[]"
-                          id="midterm" value="<?php echo $row['midterm'] ?>">
-                      </td>
-                      <td>
-                        <input type="text" class="form-control" placeholder="Enter ..." onkeyup="ofGrade()"
-                          name="finalterm[]" id="finalterm" value="<?php echo $row['finalterm'] ?>">
-                      </td>
-                      <td>
-                        <?php echo $row['ofgrade']; ?>
-                      </td>
-                      <td>
-                        <?php echo $row['numgrade']; ?>
-                      </td>
-                      <?php
-                      if ($row['remarks'] == "Passed") {
-                        ?>
-                        <td style="color: green; font-weight: bold;">
-                          <?php echo $row['remarks']; ?>
-                        </td>
-                        <?php
-                      } elseif ($row['remarks'] == "Failed") {
-                        ?>
-                        <td style="color: red; font-weight: bold;">
-                          <?php echo $row['remarks']; ?>
-                        </td>
-                        <?php
-                      } else {
-                        ?>
-                        <td style="color: orange; font-weight: bold;">
-                          <?php echo $row['remarks']; ?>
-                        </td>
-                        <?php
-                      }
-                      ?>
-                      
-                      <td>
-                        <input type="text" class="form-control" placeholder="Enter ..." onkeyup="ofGrade()"
-                          name="absences[]" id="absences" value="<?php echo $row['absences'] ?>">
-                      </td>
-                      <td>
-                          <?php echo $row['inc_status']; ?>
                       </td>
                       <td>
                         <?php echo $last_updated->format('h:i a \o\n M d, Y') ?>

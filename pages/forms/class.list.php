@@ -4,6 +4,7 @@ include '../../includes/session.php';
 
 $class_code = $_GET['class_code'];
 $section = $_GET['section'];
+$class_id = $_GET['class_id'];
 
 
 
@@ -14,6 +15,7 @@ class PDF extends FPDF
     {
         include '../../includes/conn.php';
         $class_code = $_GET['class_code'];
+        $class_id = $_GET['class_id'];
         $section = $_GET['section'];
         
         if (isset($_GET['semester']) && isset($_GET['acadyear'])) {
@@ -59,7 +61,7 @@ class PDF extends FPDF
                 LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_enrolled_subjects.subj_id
                 LEFT JOIN tbl_schoolyears ON tbl_schoolyears.stud_id = tbl_enrolled_subjects.stud_id
                 LEFT JOIN tbl_schedules ON tbl_schedules.class_id = tbl_enrolled_subjects.class_id
-                WHERE tbl_schedules.class_code = '$class_code'
+                WHERE tbl_schedules.class_id = '$class_id'
                 AND tbl_schedules.section = '$section' 
                 AND tbl_schoolyears.ay_id = '$acadyear'
                 AND tbl_schoolyears.sem_id = '$semester'
@@ -370,7 +372,7 @@ class PDF extends FPDF
         $this->Cell(30, 5, '', 'B', 0);
         $this->Cell(15, 5, '', 0, 0);
         $this->SetFont('Arial', 'B', '10');
-        $this->Cell(50, 5, 'Aries Roldan', 'B', 1, 'C'); //=========================REGISTRAR NAME====================
+        $this->Cell(50, 5, 'Rebecca Dela Cruz-Vicente, LPT', 'B', 1, 'C'); //=========================REGISTRAR NAME====================
         $this->SetFont('Arial', '', '8');
         $this->Cell(20, 5, '', 0, 0);
         $this->Cell(50, 5, 'Campus Director, College Dean', 0, 0, 'C');
@@ -383,7 +385,7 @@ class PDF extends FPDF
 
         $this->Cell(20, 5, 'Received by:', 0, 0);
         $this->SetFont('Arial', 'B', '10');
-        $this->Cell(50, 5, 'Marilyn Montefalcon', 'B', 0, 'C'); //=================RECORD VERIFIER=================
+        $this->Cell(50, 5, 'Sheryl Sajo', 'B', 0, 'C'); //=================RECORD VERIFIER=================
         $this->SetFont('Arial', '', '8');
         $this->Cell(5, 5, '', 0, 0);
         $this->Cell(30, 5, '', 'B', 0);
@@ -433,7 +435,7 @@ $que = mysqli_query($conn, "SELECT *, CONCAT(tbl_students.lastname, ', ', tbl_st
                 LEFT JOIN tbl_schedules ON tbl_schedules.class_id = tbl_enrolled_subjects.class_id
                 LEFT JOIN tbl_courses ON tbl_courses.course_id = tbl_schoolyears.course_id
                 LEFT JOIN tbl_year_levels ON tbl_year_levels.year_id = tbl_schoolyears.year_id
-                WHERE tbl_schedules.class_code = '$class_code'
+                WHERE tbl_schedules.class_id = '$class_id'
                 AND tbl_schedules.section = '$section' 
                 AND tbl_schoolyears.ay_id = '$acadyear'
                 AND tbl_schoolyears.sem_id = '$semester'
@@ -455,7 +457,7 @@ while ($row = mysqli_fetch_array($que)) {
         while ($pdf->GetStringWidth($fullname) > $cellwidth) {
             $pdf->SetFontSize($tempFontSize -= 0.1);
         }
-        $pdf->Cell(100, 5, $fullname, 1, 0);
+        $pdf->Cell(100, 5, utf8_decode($fullname), 1, 0);
         $pdf->SetFont('Arial', '', '11');
         $fontsize1 = 10;
         $tempFontSize2 = $fontsize1;

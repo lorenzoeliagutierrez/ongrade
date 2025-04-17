@@ -2,10 +2,12 @@
 require ('../fpdf/fpdf.php');
 include '../../includes/session.php';
 
-if (isset($_GET['stud_id'])) {
-   $stud_id = $_GET['stud_id'];
+if (($_SESSION['role'] == 'Registrar' || $_SESSION['role'] == 'Enrollment Staff') && isset($_GET['stud_id'])) {
+    
+    $stud_id = $_GET['stud_id'];
+    
 } else {
-   $stud_id = $_SESSION['id'];
+        $stud_id = $_SESSION['id'];
 }
 
 //get invoices data
@@ -14,10 +16,12 @@ $query = mysqli_query($conn,"SELECT *,CONCAT(tbl_students.lastname, ', ', tbl_st
    LEFT JOIN tbl_schoolyears ON tbl_schoolyears.stud_id = tbl_students.stud_id
    LEFT JOIN tbl_courses ON tbl_schoolyears.course_id = tbl_courses.course_id
    LEFT JOIN tbl_genders ON tbl_genders.gender_id = tbl_students.gender_id
-   WHERE tbl_schoolyears.stud_id = '$stud_id' AND ay_id = '$_SESSION[active_acadyear]' AND sem_id = '$_SESSION[active_semester]'") or die (mysqli_error($conn)); 
+   WHERE tbl_schoolyears.stud_id = '$stud_id' ORDER BY year_id DESC, sem_id DESC LIMIT 1") or die (mysqli_error($conn)); 
    $row = mysqli_fetch_array($query);
-
-
+   
+   
+   
+ 
 
 
 
@@ -164,8 +168,8 @@ while ($row3 = mysqli_fetch_array($year_sem)) {
                      while($row2 = mysqli_fetch_array($squery)) {
                         $pdf ->Cell(5 ,4,'',0,0);
 
-                        if ($_SESSION['role'] == "Student" && $syrow['accounting_status'] == "Unpaid") {
-                           $pdf ->Cell(10 ,4,$row2['numgrade'],'B',0);
+                        if ($_SESSION['role'] == "Student" && $syrow['accounting_status'] == "Disabled") {
+                           $pdf ->Cell(10 ,4,'','B',0);
                         } else {
                            $pdf ->Cell(10 ,4,$row2['numgrade'],'B',0);
                         }
@@ -175,8 +179,15 @@ while ($row3 = mysqli_fetch_array($year_sem)) {
                         $pdf ->Cell(10 ,4,$row2['unit_lab'],0,0);
                         $pdf ->Cell(10 ,4,$row2['unit_total'],0,0);
                         $pdf ->Cell(20 ,4,$row2['prereq'],0,1);
+                        
+                        if (is_numeric($row2['unit_total'])) {
+                            $total_units = $total_units + $row2['unit_total'];
+                        } else {
+                            $value = $row2['unit_total'];
+                            $total_units = $total_units + $value[1];
+                        }
 
-                        $total_units = $total_units + $row2['unit_total'];
+                        
                      }
 
                      $pdf ->Cell(20 ,5,'',0,0);

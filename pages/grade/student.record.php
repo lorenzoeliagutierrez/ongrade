@@ -24,7 +24,7 @@ if ($_SESSION['role'] == "Student") {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard | OnGrade - Bacoor</title>
+    <title>Student's Record | OnGrade - Bacoor</title>
 
     <?php include '../../includes/links.php'; ?>
 
@@ -153,6 +153,7 @@ if ($_SESSION['role'] == "Student") {
                     if (isset($stud_id)) {
                     $stud_info = mysqli_query($conn, "SELECT *, CONCAT(lastname, ', ', firstname, ' ', middlename) as fullname FROM tbl_students 
                     LEFT JOIN tbl_schoolyears ON tbl_schoolyears.stud_id = tbl_students.stud_id WHERE tbl_schoolyears.stud_id = '$stud_id' AND ay_id = '$acadyear' AND sem_id = '$semester'");
+                    if (mysqli_num_rows($stud_info) != 0) {
                     $row = mysqli_fetch_array($stud_info);
 
                     ?>
@@ -163,7 +164,12 @@ if ($_SESSION['role'] == "Student") {
                             </h3>
                             <div class="card-tools">
                                 <?php
-                                if ($_SESSION['role'] == "Super Administrator" || $_SESSION['role'] == "Registrar") {
+                                if ($_SESSION['role'] == "Registrar" || $_SESSION['role'] == "Student" && $row['accounting_status'] != "Disabled") {
+                                ?>
+                                <a class="btn btn-primary btn-sm" href="../forms/student.gwa.php?stud_id=<?php echo $row['stud_id']?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>">Check GWA</a>
+                                <?php
+                                }
+                                if ($_SESSION['role'] == "Super Administrator" || $_SESSION['role'] == "Registrar" || $_SESSION['role'] == "Enrollment Staff") {
                                 ?>
                                 <a class="btn btn-primary btn-sm" href="../forms/student.permanent.record.php?stud_id=<?php echo $row['stud_id']?>&acadyear=<?php echo $acadyear?>&semester=<?php echo $semester?>">Permanent Record</a>
                                 <?php
@@ -187,10 +193,22 @@ if ($_SESSION['role'] == "Student") {
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $stud_info = mysqli_query($conn, "SELECT * FROM tbl_enrolled_subjects LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_enrolled_subjects.subj_id WHERE stud_id = '$stud_id' AND acad_year = '$acadyear' AND semester = '$semester'");
+                                    $stud_info = mysqli_query($conn, "SELECT * FROM tbl_enrolled_subjects
+                                    LEFT JOIN tbl_subjects_new ON tbl_subjects_new.subj_id = tbl_enrolled_subjects.subj_id
+                                    WHERE stud_id = '$stud_id' AND acad_year = '$acadyear' AND semester = '$semester'");
                                     while ($row2 = mysqli_fetch_array($stud_info)) {
-                                        if ($_SESSION['role'] == "Student" && $row['accounting_status'] == "Unpaid") {
-                                        
+                                        $faculty_info = mysqli_query($conn, "SELECT *, CONCAT(faculty_lastname, ', ', faculty_firstname, ' ', faculty_middlename) AS faculty_name FROM tbl_faculties_staff
+                                        LEFT JOIN tbl_schedules ON tbl_schedules.faculty_id = tbl_faculties_staff.faculty_id WHERE class_id = '$row2[class_id]'");
+
+                                        $row3 = mysqli_fetch_array($faculty_info);
+
+                                        if ($_SESSION['role'] == "Student" && $row['accounting_status'] == "Disabled") {
+                                        ?>
+                                        <tr>
+                                            <td colspan="8">Your grades are currently unavaible due to pending accounts.<br> Please refer to the <b>Registrar's Office</b> for clarification.</td>
+                                        </tr>
+                                        <?php
+                                        break;
                                         } else { 
                                         ?>
                                         <tr>
@@ -198,7 +216,7 @@ if ($_SESSION['role'] == "Student") {
                                                 <?php echo $row2['subj_code']; ?>
                                             </td>
                                             <td>
-                                                <?php echo $row2['subj_desc']; ?>
+                                                <?php echo $row2['subj_desc']; ?><br>Instructor: <?php echo $row3['faculty_name']; ?>
                                             </td>
                                             <td>
                                                 <?php echo $row2['prelim']; ?>
@@ -247,11 +265,13 @@ if ($_SESSION['role'] == "Student") {
                         </div>
                     </div>
                     <?php
-                    }
+                    } }
                     ?>
             </section>
             <!-- /.content -->
         </div>
+  
+               
         <!-- /.content-wrapper -->
         <?php include '../../includes/footer.php'; ?>
 
@@ -264,6 +284,7 @@ if ($_SESSION['role'] == "Student") {
     <!-- ./wrapper -->
 
     <?php include '../../includes/script.php'; ?>
+   
 </body>
 
 </html>
